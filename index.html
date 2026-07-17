@@ -1,4 +1,4 @@
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>NGC 4696 — Comment un trou noir se nourrit</title>
 <style>
   :root{
@@ -85,43 +85,38 @@
   .console{
     position:fixed; right:1rem; bottom:1rem; z-index:10;
     width:290px; max-height:calc(100vh - 4.8rem);
-    overflow-y:auto;
+    display:flex; flex-direction:column; overflow:hidden;
     background:var(--panel-bg); border:1px solid var(--panel-border);
     border-radius:10px; backdrop-filter:blur(14px) saturate(140%);
     -webkit-backdrop-filter:blur(14px) saturate(140%);
-    padding:.9rem .95rem 1rem;
     box-shadow:0 20px 50px -20px rgba(0,0,0,.6);
-    transition:transform .3s ease, opacity .3s ease;
   }
-  .console.collapsed{
-    transform:translateY(calc(100% + 1rem));
-    opacity:0;
-    pointer-events:none;
+  .console.sheet-dragging{transition:none !important;}
+  .sheet-handle{
+    flex:none; display:flex; justify-content:center;
+    padding:.6rem 0 .5rem; cursor:grab; touch-action:none;
   }
-  .console-toggle{
-    position:fixed; bottom:1rem; right:1rem; z-index:12;
-    display:none; width:36px; height:36px; border-radius:50%;
-    background:var(--panel-bg); border:1px solid var(--panel-border);
-    backdrop-filter:blur(10px) saturate(140%);
-    -webkit-backdrop-filter:blur(10px) saturate(140%);
-    color:var(--accent); cursor:pointer; align-items:center; justify-content:center;
-    font-size:1.2rem; line-height:1;
-    box-shadow:0 4px 16px -8px rgba(0,0,0,.5);
-    transition:opacity .3s ease, transform .3s ease;
-  }
-  .console-toggle.show{display:flex;}
-  .console-toggle.hidden{opacity:0; transform:scale(0.8); pointer-events:none;}
-  .console::-webkit-scrollbar{width:6px;}
-  .console::-webkit-scrollbar-thumb{background:var(--hairline); border-radius:3px;}
+  .sheet-handle:active{cursor:grabbing;}
+  .sheet-handle .bar{width:38px; height:4px; border-radius:2px; background:var(--hairline);}
+  .sheet-handle:focus-visible{outline:2px solid var(--accent); outline-offset:-2px; border-radius:8px;}
+  .console-body{overflow-y:auto; padding:.1rem .95rem 1rem; transition:opacity .25s ease;}
+  .console.lowered .console-body{opacity:0; pointer-events:none; overflow:hidden;}
+  .console-body::-webkit-scrollbar{width:6px;}
+  .console-body::-webkit-scrollbar-thumb{background:var(--hairline); border-radius:3px;}
 
-  .lang-row{display:flex; align-items:center; gap:.45rem; margin-bottom:.35rem;}
-  .lang-row select{
-    flex:0 0 auto; width:auto; background:rgba(140,158,199,.10); border:1px solid var(--hairline);
-    color:var(--text-1); border-radius:6px; padding:.24rem .3rem;
-    font-family:var(--font-mono); font-size:.72rem; letter-spacing:.06em;
+  .lang-row{display:flex; align-items:center; margin-bottom:.35rem;}
+  .lang-chip{
+    position:relative; display:inline-flex; align-items:center; gap:.4rem;
+    padding:.32rem .6rem; border:1px solid var(--hairline); border-radius:999px;
+    background:rgba(140,158,199,.10); cursor:pointer;
+    font-family:var(--font-mono); font-size:.72rem; letter-spacing:.08em; color:var(--text-1);
   }
-  .lang-row select:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
-  .lang-row select option{background:#0c111f; color:#e9edf7;}
+  .lang-chip:focus-within{outline:2px solid var(--accent); outline-offset:2px;}
+  .lang-chip select{
+    position:absolute; inset:0; width:100%; height:100%;
+    opacity:0; cursor:pointer; appearance:none; -webkit-appearance:none; border:0; margin:0;
+  }
+  .lang-chip select option{background:#0c111f; color:#e9edf7;}
 
   .section-label{
     font-family:var(--font-mono); font-size:.62rem; letter-spacing:.14em;
@@ -198,46 +193,54 @@
   .dimmed{opacity:.32; pointer-events:none; transition:opacity .25s ease;}
 
   .ai-badge{
-    position:fixed; top:1rem; right:1rem; z-index:11;
-    font-family:var(--font-mono); font-size:.66rem; letter-spacing:.08em;
-    color:var(--text-1); background:var(--panel-bg);
-    border:1px solid var(--panel-border); border-radius:8px;
-    padding:.42rem .7rem;
-    backdrop-filter:blur(10px) saturate(140%);
-    -webkit-backdrop-filter:blur(10px) saturate(140%);
-    box-shadow:0 10px 30px -12px rgba(0,0,0,.5);
-    pointer-events:none; white-space:nowrap;
+    font-family:var(--font-mono); font-size:.6rem; letter-spacing:.1em;
+    color:var(--text-3-solid); margin:0 0 .45rem;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
   .ai-badge::before{content:"✦ "; color:var(--accent);}
 
+  /* Fullscreen mode: a single tap/click on the empty scene hides every
+     overlay; another tap brings them back. */
+  .masthead, .console{
+    transition:opacity .35s ease, visibility .35s ease, transform .3s ease;
+  }
+  body.fullscreen .masthead,
+  body.fullscreen .console{
+    opacity:0; visibility:hidden; pointer-events:none;
+  }
+
   @media (max-width: 640px){
-    .console{width:calc(100vw - 1.6rem); left:.8rem; right:.8rem; bottom:.8rem; max-height:48vh; font-size:14px;}
+    .console{width:calc(100vw - 1.6rem); left:.8rem; right:.8rem; bottom:.8rem; max-height:50vh; font-size:14px;}
+    .console-body{padding:.15rem 1rem 1.1rem;}
     .masthead{max-width:calc(100vw - 1.6rem); padding:.8rem 1rem .7rem;}
     .masthead-title{font-size:1.1rem;}
     .masthead-sub{font-size:.82rem;}
     .masthead-kicker{font-size:.68rem;}
     .paper-link{position:static; margin-top:.6rem; max-width:100%; font-size:.68rem;}
-    .ai-badge{
-      top:.6rem; right:.6rem; max-width:46vw;
-      white-space:normal; text-align:right;
-      font-size:.6rem; padding:.3rem .5rem; line-height:1.5;
-    }
-    .console-toggle.show{display:flex; bottom:.8rem; right:.8rem;}
-    .section-label{font-size:.68rem;}
-    .legend-row{font-size:.85rem;}
-    .toggle-row{font-size:.85rem;}
-    button{font-size:.82rem; padding:.48rem .65rem;}
-    .lang-row select{font-size:.78rem;}
+    .ai-badge{font-size:.56rem;}
+    .section-label{font-size:.68rem; margin:1.1rem 0 .6rem;}
+    .legend-row{font-size:.85rem; margin:.5rem 0; gap:.65rem;}
+    .toggle-row{font-size:.85rem; margin:.3rem 0; min-height:36px;}
+    .switch{width:42px; height:24px;}
+    .switch .knob{width:16px; height:16px; top:4px; left:4px;}
+    .switch input:checked + .track .knob{transform:translateX(18px);}
+    .btn-row{gap:.5rem;}
+    button{font-size:.85rem; padding:.6rem .65rem;}
+    .lang-chip{font-size:.8rem; padding:.4rem .7rem;}
     details.info p{font-size:.82rem;}
+    details.info summary{padding:.25rem 0;}
+    .speed-row{gap:.65rem; margin:.6rem 0 .2rem;}
+    .speed-row input[type=range]{height:32px;}
     .speed-val{font-size:.78rem;}
   }
   @media (max-width: 420px){
     .masthead-title{font-size:.95rem;}
     .masthead-sub{font-size:.76rem;}
-    .console{font-size:13px; padding:.7rem;}
+    .console-body{padding:.1rem .85rem .85rem;}
+    .console{font-size:13px;}
     .legend-row{font-size:.8rem;}
     .toggle-row{font-size:.8rem;}
-    button{font-size:.78rem; padding:.42rem .55rem;}
+    button{font-size:.8rem; padding:.5rem .55rem;}
   }
   @media (prefers-reduced-motion: reduce){
     * { scroll-behavior:auto !important; }
@@ -256,6 +259,7 @@
 </div>
 
 <header class="masthead" id="masthead">
+  <p class="ai-badge" id="credit"></p>
   <p class="masthead-kicker" id="m-kicker"></p>
   <h1 class="masthead-title" id="m-title"></h1>
   <p class="masthead-sub" id="m-sub"></p>
@@ -263,26 +267,33 @@
 </header>
 
 <div class="console" id="console">
+  <div class="sheet-handle" id="sheet-handle" role="button" tabindex="0" aria-label="Toggle panel"><span class="bar"></span></div>
+  <div class="console-body">
   <div class="lang-row">
-    <span aria-hidden="true">🌐</span>
-    <select id="lang-select" aria-label="Language">
-      <option value="en">English</option>
-      <option value="fr">Français</option>
-      <option value="es">Español</option>
-      <option value="pt">Português</option>
-      <option value="de">Deutsch</option>
-      <option value="ru">Русский</option>
-      <option value="zh">中文</option>
-      <option value="ja">日本語</option>
-      <option value="ar">العربية</option>
-      <option value="hi">हिन्दी</option>
-    </select>
+    <label class="lang-chip">
+      <span aria-hidden="true">🌐</span><span id="lang-code">EN</span>
+      <select id="lang-select" aria-label="Language">
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+        <option value="es">Español</option>
+        <option value="pt">Português</option>
+        <option value="de">Deutsch</option>
+        <option value="ru">Русский</option>
+        <option value="zh">中文</option>
+        <option value="ja">日本語</option>
+        <option value="ar">العربية</option>
+        <option value="hi">हिन्दी</option>
+      </select>
+    </label>
   </div>
 
   <p class="section-label" id="lbl-render"></p>
   <div class="btn-row">
     <button class="view-btn active" id="mode-schema"></button>
     <button class="view-btn" id="mode-art"></button>
+  </div>
+  <div class="toggle-row"><span id="lb-camview"></span>
+    <label class="switch"><input type="checkbox" id="tg-camview" checked><span class="track"><span class="knob"></span></span></label>
   </div>
 
   <div id="legend-section">
@@ -322,8 +333,8 @@
     <button id="btn-reset" style="flex:1;"></button>
   </div>
   <div class="speed-row">
-    <input type="range" id="speed" min="0.1" max="3" step="0.05" value="1" aria-label="Speed">
-    <span class="speed-val" id="speed-val">1.0×</span>
+    <input type="range" id="speed" min="0.1" max="3" step="0.05" value="0.8" aria-label="Speed">
+    <span class="speed-val" id="speed-val">0.8×</span>
   </div>
   <div class="toggle-row"><span id="lb-auto"></span>
     <label class="switch"><input type="checkbox" id="tg-auto"><span class="track"><span class="knob"></span></span></label>
@@ -343,10 +354,9 @@
     <p id="about-3"></p>
     <p class="cite">Hlavacek-Larrondo, J. et al. (2026), <a href="https://iopscience.iop.org/article/10.3847/2041-8213/ae81ae" target="_blank" rel="noopener">"JWST reveals how black holes are fed"</a>, ApJL. doi:<a href="https://doi.org/10.3847/2041-8213/ae81ae" target="_blank" rel="noopener">10.3847/2041-8213/ae81ae</a> — NGC 1275 (Perseus): similar structure.</p>
   </details>
+  </div>
 </div>
 
-<div class="ai-badge" id="credit"></div>
-<button class="console-toggle" id="console-toggle" aria-label="Toggle controls">✦</button>
 
 <script>
 (function(){
@@ -361,7 +371,7 @@
       kicker:"JWST · NIRSpec — Centaurus Cluster",
       title:"How a supermassive black hole is fed",
       sub:"At the heart of <b>NGC 4696</b>, filaments of multiphase gas fall in from the cluster's hot atmosphere and feed a rotating disk around the central black hole.",
-      render:"Rendering", mSchema:"Diagram", mSchemaSub:"educational", mArt:"Artistic view", mArtSub:"gravitational lensing",
+      render:"Rendering", mSchema:"Diagram", mSchemaSub:"educational", mArt:"Artistic view", mArtSub:"gravitational lensing", camView:"Per-view camera",
       legend:"Phase legend",
       phHot:"Hot plasma (X-rays)", phWarm:"Warm ionized gas", phCold:"Cold molecular gas", phJet:"Radio jet (AGN)", phBH:"Supermassive black hole",
       layers:"Layers", lAtmo:"Hot atmosphere", lFil:"Infalling filaments", lDisk:"Circumnuclear disk", lJet:"Radio jets", lGal:"Host galaxy (NGC 4696)", lUni:"Cluster galaxies",
@@ -378,7 +388,7 @@
       kicker:"JWST · NIRSpec — Amas de Centaurus",
       title:"Comment un trou noir supermassif se nourrit",
       sub:"Au cœur de <b>NGC 4696</b>, des filaments de gaz multiphasé s'effondrent depuis l'atmosphère chaude de l'amas et alimentent un disque en rotation autour du trou noir central.",
-      render:"Rendu", mSchema:"Schéma", mSchemaSub:"pédagogique", mArt:"Vue artistique", mArtSub:"lentille gravitationnelle",
+      render:"Rendu", mSchema:"Schéma", mSchemaSub:"pédagogique", mArt:"Vue artistique", mArtSub:"lentille gravitationnelle", camView:"Caméra par vue",
       legend:"Légende des phases",
       phHot:"Plasma chaud (rayons X)", phWarm:"Gaz ionisé chaud", phCold:"Gaz moléculaire froid", phJet:"Jet radio (AGN)", phBH:"Trou noir supermassif",
       layers:"Couches", lAtmo:"Atmosphère chaude", lFil:"Filaments en chute", lDisk:"Disque circumnucléaire", lJet:"Jets radio", lGal:"Galaxie hôte (NGC 4696)", lUni:"Galaxies de l'amas",
@@ -395,7 +405,7 @@
       kicker:"JWST · NIRSpec — Cúmulo de Centaurus",
       title:"Cómo se alimenta un agujero negro supermasivo",
       sub:"En el corazón de <b>NGC 4696</b>, filamentos de gas multifase caen desde la atmósfera caliente del cúmulo y alimentan un disco en rotación en torno al agujero negro central.",
-      render:"Renderizado", mSchema:"Esquema", mSchemaSub:"pedagógico", mArt:"Vista artística", mArtSub:"lente gravitacional",
+      render:"Renderizado", mSchema:"Esquema", mSchemaSub:"pedagógico", mArt:"Vista artística", mArtSub:"lente gravitacional", camView:"Cámara por vista",
       legend:"Leyenda de fases",
       phHot:"Plasma caliente (rayos X)", phWarm:"Gas ionizado caliente", phCold:"Gas molecular frío", phJet:"Chorro de radio (AGN)", phBH:"Agujero negro supermasivo",
       layers:"Capas", lAtmo:"Atmósfera caliente", lFil:"Filamentos en caída", lDisk:"Disco circumnuclear", lJet:"Chorros de radio", lGal:"Galaxia anfitriona (NGC 4696)", lUni:"Galaxias del cúmulo",
@@ -412,7 +422,7 @@
       kicker:"JWST · NIRSpec — Aglomerado de Centaurus",
       title:"Como um buraco negro supermassivo se alimenta",
       sub:"No coração de <b>NGC 4696</b>, filamentos de gás multifásico caem da atmosfera quente do aglomerado e alimentam um disco em rotação ao redor do buraco negro central.",
-      render:"Renderização", mSchema:"Esquema", mSchemaSub:"didático", mArt:"Vista artística", mArtSub:"lente gravitacional",
+      render:"Renderização", mSchema:"Esquema", mSchemaSub:"didático", mArt:"Vista artística", mArtSub:"lente gravitacional", camView:"Câmera por vista",
       legend:"Legenda das fases",
       phHot:"Plasma quente (raios X)", phWarm:"Gás ionizado quente", phCold:"Gás molecular frio", phJet:"Jato de rádio (AGN)", phBH:"Buraco negro supermassivo",
       layers:"Camadas", lAtmo:"Atmosfera quente", lFil:"Filamentos em queda", lDisk:"Disco circunuclear", lJet:"Jatos de rádio", lGal:"Galáxia hospedeira (NGC 4696)", lUni:"Galáxias do aglomerado",
@@ -429,7 +439,7 @@
       kicker:"JWST · NIRSpec — Centaurus-Haufen",
       title:"Wie ein supermassereiches Schwarzes Loch gefüttert wird",
       sub:"Im Herzen von <b>NGC 4696</b> stürzen Filamente aus Mehrphasengas aus der heißen Atmosphäre des Haufens ein und speisen eine rotierende Scheibe um das zentrale Schwarze Loch.",
-      render:"Darstellung", mSchema:"Schema", mSchemaSub:"didaktisch", mArt:"Künstlerische Ansicht", mArtSub:"Gravitationslinse",
+      render:"Darstellung", mSchema:"Schema", mSchemaSub:"didaktisch", mArt:"Künstlerische Ansicht", mArtSub:"Gravitationslinse", camView:"Kamera je Ansicht",
       legend:"Phasen-Legende",
       phHot:"Heißes Plasma (Röntgen)", phWarm:"Warmes ionisiertes Gas", phCold:"Kaltes molekulares Gas", phJet:"Radio-Jet (AGN)", phBH:"Supermassereiches Schwarzes Loch",
       layers:"Ebenen", lAtmo:"Heiße Atmosphäre", lFil:"Einfallende Filamente", lDisk:"Zirkumnukleare Scheibe", lJet:"Radio-Jets", lGal:"Wirtsgalaxie (NGC 4696)", lUni:"Haufengalaxien",
@@ -446,7 +456,7 @@
       kicker:"JWST · NIRSpec — Скопление Центавра",
       title:"Как питается сверхмассивная чёрная дыра",
       sub:"В сердце <b>NGC 4696</b> волокна многофазного газа падают из горячей атмосферы скопления и питают вращающийся диск вокруг центральной чёрной дыры.",
-      render:"Режим", mSchema:"Схема", mSchemaSub:"учебная", mArt:"Художественный вид", mArtSub:"гравитационное линзирование",
+      render:"Режим", mSchema:"Схема", mSchemaSub:"учебная", mArt:"Художественный вид", mArtSub:"гравитационное линзирование", camView:"Камера для каждого вида",
       legend:"Легенда фаз",
       phHot:"Горячая плазма (рентген)", phWarm:"Тёплый ионизованный газ", phCold:"Холодный молекулярный газ", phJet:"Радиоджет (AGN)", phBH:"Сверхмассивная чёрная дыра",
       layers:"Слои", lAtmo:"Горячая атмосфера", lFil:"Падающие волокна", lDisk:"Околоядерный диск", lJet:"Радиоджеты", lGal:"Родительская галактика (NGC 4696)", lUni:"Галактики скопления",
@@ -463,7 +473,7 @@
       kicker:"JWST · NIRSpec — 半人马座星系团",
       title:"超大质量黑洞如何进食",
       sub:"在 <b>NGC 4696</b> 的核心，多相气体细丝从星系团的炽热大气中坠落，为围绕中心黑洞旋转的吸积盘提供物质。",
-      render:"渲染", mSchema:"示意图", mSchemaSub:"教学", mArt:"艺术视图", mArtSub:"引力透镜",
+      render:"渲染", mSchema:"示意图", mSchemaSub:"教学", mArt:"艺术视图", mArtSub:"引力透镜", camView:"每个视图独立视角",
       legend:"相态图例",
       phHot:"炽热等离子体（X射线）", phWarm:"温热电离气体", phCold:"冷分子气体", phJet:"射电喷流（AGN）", phBH:"超大质量黑洞",
       layers:"图层", lAtmo:"炽热大气", lFil:"坠落细丝", lDisk:"核周盘", lJet:"射电喷流", lGal:"宿主星系（NGC 4696）", lUni:"星系团成员星系",
@@ -480,7 +490,7 @@
       kicker:"JWST · NIRSpec — ケンタウルス座銀河団",
       title:"超大質量ブラックホールはどのように物質を取り込むのか",
       sub:"<b>NGC 4696</b> の中心部では、多相ガスのフィラメントが銀河団の高温大気から落下し、中心ブラックホールを取り巻く回転円盤に物質を供給しています。",
-      render:"表示モード", mSchema:"模式図", mSchemaSub:"解説用", mArt:"アーティスティック表示", mArtSub:"重力レンズ",
+      render:"表示モード", mSchema:"模式図", mSchemaSub:"解説用", mArt:"アーティスティック表示", mArtSub:"重力レンズ", camView:"ビューごとの視点",
       legend:"相の凡例",
       phHot:"高温プラズマ（X線）", phWarm:"電離ガス", phCold:"低温分子ガス", phJet:"電波ジェット（AGN）", phBH:"超大質量ブラックホール",
       layers:"レイヤー", lAtmo:"高温大気", lFil:"落下するフィラメント", lDisk:"核周円盤", lJet:"電波ジェット", lGal:"母銀河（NGC 4696）", lUni:"銀河団の銀河",
@@ -497,7 +507,7 @@
       kicker:"JWST · NIRSpec — عنقود قنطورس",
       title:"كيف يتغذى الثقب الأسود فائق الكتلة",
       sub:"في قلب <b>NGC 4696</b>، تسقط خيوط من الغاز متعدد الأطوار من الغلاف الساخن للعنقود لتغذي قرصًا دوارًا حول الثقب الأسود المركزي.",
-      render:"العرض", mSchema:"مخطط", mSchemaSub:"تعليمي", mArt:"عرض فني", mArtSub:"عدسة جاذبية",
+      render:"العرض", mSchema:"مخطط", mSchemaSub:"تعليمي", mArt:"عرض فني", mArtSub:"عدسة جاذبية", camView:"كاميرا لكل عرض",
       legend:"مفتاح الأطوار",
       phHot:"بلازما ساخنة (أشعة سينية)", phWarm:"غاز متأين دافئ", phCold:"غاز جزيئي بارد", phJet:"نفاث راديوي (AGN)", phBH:"ثقب أسود فائق الكتلة",
       layers:"الطبقات", lAtmo:"الغلاف الساخن", lFil:"خيوط ساقطة", lDisk:"القرص المحيط بالنواة", lJet:"نفاثات راديوية", lGal:"المجرة المضيفة (NGC 4696)", lUni:"مجرات العنقود",
@@ -514,7 +524,7 @@
       kicker:"JWST · NIRSpec — सेंटॉरस क्लस्टर",
       title:"एक महाविशाल ब्लैक होल कैसे भोजन पाता है",
       sub:"<b>NGC 4696</b> के केंद्र में, बहु-चरण गैस के तंतु क्लस्टर के गर्म वायुमंडल से गिरते हैं और केंद्रीय ब्लैक होल के चारों ओर घूमती डिस्क को पोषित करते हैं।",
-      render:"प्रदर्शन", mSchema:"आरेख", mSchemaSub:"शैक्षिक", mArt:"कलात्मक दृश्य", mArtSub:"गुरुत्वीय लेंसिंग",
+      render:"प्रदर्शन", mSchema:"आरेख", mSchemaSub:"शैक्षिक", mArt:"कलात्मक दृश्य", mArtSub:"गुरुत्वीय लेंसिंग", camView:"प्रत्येक दृश्य का कैमरा",
       legend:"चरण संकेत",
       phHot:"गर्म प्लाज़्मा (एक्स-रे)", phWarm:"आयनित गैस", phCold:"ठंडी आणविक गैस", phJet:"रेडियो जेट (AGN)", phBH:"महाविशाल ब्लैक होल",
       layers:"परतें", lAtmo:"गर्म वायुमंडल", lFil:"गिरते तंतु", lDisk:"परिनाभिकीय डिस्क", lJet:"रेडियो जेट", lGal:"मेज़बान आकाशगंगा (NGC 4696)", lUni:"क्लस्टर की आकाशगंगाएँ",
@@ -550,6 +560,7 @@
     document.getElementById('lbl-render').textContent = t.render;
     document.getElementById('mode-schema').innerHTML = t.mSchema + '<br><span style="opacity:.6">' + t.mSchemaSub + '</span>';
     document.getElementById('mode-art').innerHTML = t.mArt + '<br><span style="opacity:.6">' + t.mArtSub + '</span>';
+    document.getElementById('lb-camview').textContent = t.camView;
     document.getElementById('lbl-legend').textContent = t.legend;
     document.getElementById('ph-hot').textContent = t.phHot;
     document.getElementById('ph-warm').textContent = t.phWarm;
@@ -579,6 +590,7 @@
     document.getElementById('veil').textContent = t.veil;
     document.getElementById('fb-title').textContent = t.fbT;
     document.getElementById('fb-body').textContent = t.fbB;
+    document.getElementById('lang-code').textContent = lang.toUpperCase();
     var dir = (lang === 'ar') ? 'rtl' : 'ltr';
     ['masthead','console','fallback'].forEach(function(id){
       document.getElementById(id).setAttribute('dir', dir);
@@ -1216,9 +1228,25 @@
     cam.q = quatNormalize(quatMul(quatMul(qy, qp), cam.q));
   }
 
+  // A tap (press + release without moving) toggles fullscreen mode:
+  // every overlay fades out, a second tap brings them back.
+  var tap = null;
+  var TAP_SLOP = 9, TAP_MS = 400;
+
   canvas.addEventListener('pointerdown', function(e){
+    if(canvas.setPointerCapture){ try{ canvas.setPointerCapture(e.pointerId); }catch(err){} }
     pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
-    if(pointers.size === 1){ setDragging(true); lastX=e.clientX; lastY=e.clientY; }
+    if(pointers.size === 1){
+      setDragging(true); lastX=e.clientX; lastY=e.clientY;
+      tap = {x:e.clientX, y:e.clientY, t:performance.now()};
+    } else {
+      tap = null;
+      if(pointers.size === 2){
+        var pts = Array.from(pointers.values());
+        canvas._pinchD = Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y);
+        cam.vYaw = 0; cam.vPitch = 0;
+      }
+    }
   });
   canvas.addEventListener('pointermove', function(e){
     if(!pointers.has(e.pointerId)) return;
@@ -1227,15 +1255,14 @@
       var pts = Array.from(pointers.values());
       var d = Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y);
       if(canvas._pinchD){
-        var ratio = canvas._pinchD / Math.max(d, 1);
-        var newR = cam.radius * ratio;
-        newR = cam.radius + (newR - cam.radius) * 1.8;
-        cam.radius = clamp(newR, R_MIN, R_MAX);
+        cam.radius = clamp(cam.radius * canvas._pinchD / Math.max(d, 1), R_MIN, R_MAX);
+        transition = null;
       }
       canvas._pinchD = d;
       return;
     }
     if(!isDragging) return;
+    if(tap && Math.hypot(e.clientX-tap.x, e.clientY-tap.y) > TAP_SLOP) tap = null;
     var dx = e.clientX-lastX, dy = e.clientY-lastY;
     lastX=e.clientX; lastY=e.clientY;
     orbitBy(dx*0.0048, -dy*0.0048);
@@ -1243,7 +1270,7 @@
     transition = null;
   });
   function endPointer(e){
-    if(tapTimer){ clearTimeout(tapTimer); tapTimer = null; }
+    if(!pointers.has(e.pointerId)) return;
     pointers.delete(e.pointerId);
     canvas._pinchD = null;
     if(pointers.size === 1){
@@ -1253,10 +1280,16 @@
       setDragging(true);
     } else if(pointers.size === 0) {
       setDragging(false);
+      if(e.type === 'pointerup' && tap && performance.now() - tap.t < TAP_MS){
+        document.body.classList.toggle('fullscreen');
+      }
+      tap = null;
     }
   }
   canvas.addEventListener('pointerup', endPointer);
   canvas.addEventListener('pointercancel', endPointer);
+  // Safari (iOS/macOS) page pinch-zoom guard — the scene handles pinch itself
+  document.addEventListener('gesturestart', function(e){ e.preventDefault(); });
   canvas.addEventListener('wheel', function(e){
     e.preventDefault();
     var factor = Math.pow(1.003, e.deltaY);
@@ -1292,28 +1325,42 @@
   // UI: render mode, layers, play/pause, speed
   // ---------------------------------------------------------------
   var renderMode = 'schema';
+  // Each render mode remembers its own camera; switching animates between
+  // them. The "per-view camera" toggle turns this off (shared camera).
+  var camPerView = true;
+  var modeCam = { schema: null, art: { q: CINE_VIEW.q.slice(), radius: CINE_VIEW.radius } };
   function setMode(mode){
     if(mode === renderMode) return;
+    if(camPerView){
+      modeCam[renderMode] = { q: cam.q.slice(), radius: cam.radius };
+      var saved = modeCam[mode];
+      if(saved) flyTo({ q: saved.q, radius: saved.radius }, null);
+    }
+    modeLayers[renderMode] = copyLayers(layerVisible);
+    if(modeLayers[mode]) applyLayers(modeLayers[mode]);
     renderMode = mode;
     document.getElementById('mode-schema').classList.toggle('active', mode==='schema');
     document.getElementById('mode-art').classList.toggle('active', mode==='art');
     document.getElementById('row-disk').classList.toggle('dimmed', mode==='art');
-    // per-mode layer defaults: galaxy & cluster shine in the artistic vista,
-    // stay out of the way in the educational diagram
-    setLayer('gal', 'tg-gal', mode==='art');
-    setLayer('uni', 'tg-uni', mode==='art');
-    if(mode === 'art'){
-      flyTo({ q: CINE_VIEW.q, radius: CINE_VIEW.radius }, null);
-    }
     resize();
   }
   document.getElementById('mode-schema').addEventListener('click', function(){ setMode('schema'); });
   document.getElementById('mode-art').addEventListener('click', function(){ setMode('art'); });
+  document.getElementById('tg-camview').addEventListener('change', function(e){ camPerView = e.target.checked; });
 
   var layerVisible = { atmo:true, fil:true, disk:true, jet:true, gal:false, uni:false };
-  function setLayer(key, checkboxId, v){
-    layerVisible[key] = v;
-    document.getElementById(checkboxId).checked = v;
+  // Each render mode keeps its own layer selection; the artistic view
+  // starts with the host galaxy and cluster galaxies visible.
+  var modeLayers = { schema: null, art: { atmo:true, fil:true, disk:true, jet:true, gal:true, uni:true } };
+  function copyLayers(l){ return { atmo:l.atmo, fil:l.fil, disk:l.disk, jet:l.jet, gal:l.gal, uni:l.uni }; }
+  function applyLayers(l){
+    layerVisible = copyLayers(l);
+    document.getElementById('tg-atmo').checked = l.atmo;
+    document.getElementById('tg-fil').checked = l.fil;
+    document.getElementById('tg-disk').checked = l.disk;
+    document.getElementById('tg-jet').checked = l.jet;
+    document.getElementById('tg-gal').checked = l.gal;
+    document.getElementById('tg-uni').checked = l.uni;
   }
   document.getElementById('tg-atmo').addEventListener('change', function(e){ layerVisible.atmo = e.target.checked; });
   document.getElementById('tg-fil').addEventListener('change', function(e){ layerVisible.fil = e.target.checked; });
@@ -1329,7 +1376,7 @@
     var t = I18N[currentLang] || I18N.en;
     btnPlay.textContent = playing ? t.pause : t.play;
   });
-  var speed = 1.0;
+  var speed = 0.8;
   var speedInput = document.getElementById('speed');
   var speedVal = document.getElementById('speed-val');
   speedInput.addEventListener('input', function(e){
@@ -1547,41 +1594,65 @@
   document.getElementById('veil').classList.add('hidden');
   requestAnimationFrame(frame);
 
-  // ---- Mobile: auto-hide console on canvas interaction, tap to show ----
+  // ---------------------------------------------------------------
+  // Settings panel: iOS-style bottom sheet — drag the grab bar to
+  // lower/raise it; when lowered, only the bar stays visible.
+  // ---------------------------------------------------------------
   var consoleEl = document.getElementById('console');
-  var consoleToggle = document.getElementById('console-toggle');
-  var consoleVisible = true;
-  var tapTimer = null;
+  var sheetHandle = document.getElementById('sheet-handle');
+  var sheetOffset = 0, sheetDrag = null;
 
-  function isMobile(){ return window.innerWidth <= 640; }
-
-  function showConsole(v){
-    consoleVisible = v;
-    consoleEl.classList.toggle('collapsed', !v);
-    consoleToggle.classList.toggle('show', !v);
-    consoleToggle.classList.toggle('hidden', v);
+  function sheetMax(){ return Math.max(consoleEl.offsetHeight - sheetHandle.offsetHeight, 0); }
+  function sheetTo(off){
+    sheetOffset = off;
+    consoleEl.style.transform = off > 0 ? 'translateY(' + off + 'px)' : '';
   }
+  function setLowered(v){ consoleEl.classList.toggle('lowered', v); }
 
-  // Init toggle visibility — hidden by default (console starts visible)
-  if(isMobile()){ showConsole(true); }
-
-  consoleToggle.addEventListener('click', function(e){
-    e.stopPropagation();
-    showConsole(true);
+  sheetHandle.addEventListener('pointerdown', function(e){
+    if(sheetHandle.setPointerCapture){ try{ sheetHandle.setPointerCapture(e.pointerId); }catch(err){} }
+    sheetDrag = { y0:e.clientY, base:sheetOffset, max:sheetMax(), moved:false,
+                  lastY:e.clientY, lastT:performance.now(), v:0 };
+    consoleEl.classList.add('sheet-dragging');
+    setLowered(false);
+    e.preventDefault();
   });
-
-  // Hide console on first drag on mobile to free screen space
-  canvas.addEventListener('pointerdown', function(e){
-    if(isMobile() && consoleVisible && pointers.size === 1){
-      tapTimer = setTimeout(function(){
-        showConsole(false);
-      }, 200);
+  sheetHandle.addEventListener('pointermove', function(e){
+    if(!sheetDrag) return;
+    var now = performance.now();
+    var dy = e.clientY - sheetDrag.y0;
+    if(Math.abs(dy) > 4) sheetDrag.moved = true;
+    sheetDrag.v = (e.clientY - sheetDrag.lastY) / Math.max(now - sheetDrag.lastT, 1);
+    sheetDrag.lastY = e.clientY; sheetDrag.lastT = now;
+    sheetTo(clamp(sheetDrag.base + dy, 0, sheetDrag.max));
+  });
+  function endSheetDrag(){
+    if(!sheetDrag) return;
+    consoleEl.classList.remove('sheet-dragging');
+    var open;
+    if(!sheetDrag.moved) open = sheetOffset > 0;            // tap toggles
+    else if(sheetDrag.v > 0.5) open = false;                // downward flick
+    else if(sheetDrag.v < -0.5) open = true;                // upward flick
+    else open = sheetOffset < sheetDrag.max / 2;
+    sheetTo(open ? 0 : sheetDrag.max);
+    setLowered(!open);
+    sheetDrag = null;
+  }
+  sheetHandle.addEventListener('pointerup', endSheetDrag);
+  sheetHandle.addEventListener('pointercancel', endSheetDrag);
+  sheetHandle.addEventListener('keydown', function(e){
+    if(e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      var open = sheetOffset > 0;
+      sheetTo(open ? 0 : sheetMax());
+      setLowered(!open);
     }
   });
-
-  // Prevent the pointerdown on the console from propagating to the canvas
-  consoleEl.addEventListener('pointerdown', function(e){ e.stopPropagation(); });
-  consoleEl.addEventListener('pointerup', function(e){ e.stopPropagation(); });
+  // Keep the peek aligned if the panel's size changes while lowered
+  if(window.ResizeObserver){
+    new ResizeObserver(function(){ if(sheetOffset > 0) sheetTo(sheetMax()); }).observe(consoleEl);
+  }
+  window.addEventListener('resize', function(){ if(sheetOffset > 0) sheetTo(sheetMax()); });
 
 })();
 </script>
