@@ -18,3 +18,9 @@ This scene illustrates how supermassive black holes are fed: hot gas (10⁸ K) i
 
 **Artistic view:** light rays are genuinely bent by gravity (Schwarzschild black hole): the disk appears arched above and below the shadow, with the brightness asymmetry of the relativistic Doppler effect. It is an illustration of the central black hole, not a simulation of the paper's data.
 
+### Gratitude to researchers
+
+I am deeply grateful to all the researchers involved in this work — their dedication, curiosity, and rigor are invaluable. It is thanks to their efforts that we can even begin to visualize phenomena occurring hundreds of millions of light-years away.
+
+This work is the result of decades of research, countless nights of observation, and an unrelenting pursuit of knowledge. To all the researchers who push the boundaries of our understanding of the Universe: my deepest and most sincere gratitude.
+
