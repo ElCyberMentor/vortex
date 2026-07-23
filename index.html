@@ -1,3 +1,7 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>NGC 4696 — Comment un trou noir se nourrit</title>
 <style>
@@ -212,6 +216,11 @@
   @media (max-width: 640px){
     .console{width:calc(100vw - 1.6rem); left:.8rem; right:.8rem; bottom:.8rem; max-height:50vh; font-size:14px;}
     .console-body{padding:.15rem 1rem 1.1rem;}
+    .lang-row{
+      margin-left:-1rem; margin-right:-1rem;
+      padding-left:1rem; padding-right:1rem;
+      touch-action:none;
+    }
     .masthead{max-width:calc(100vw - 1.6rem); padding:.8rem 1rem .7rem;}
     .masthead-title{font-size:1.1rem;}
     .masthead-sub{font-size:.82rem;}
@@ -237,6 +246,7 @@
     .masthead-title{font-size:.95rem;}
     .masthead-sub{font-size:.76rem;}
     .console-body{padding:.1rem .85rem .85rem;}
+    .lang-row{margin-left:-.85rem; margin-right:-.85rem; padding-left:.85rem; padding-right:.85rem;}
     .console{font-size:13px;}
     .legend-row{font-size:.8rem;}
     .toggle-row{font-size:.8rem;}
@@ -246,6 +256,8 @@
     * { scroll-behavior:auto !important; }
   }
 </style>
+</head>
+<body>
 
 <canvas id="scene" aria-label="NGC 4696"></canvas>
 
@@ -1251,6 +1263,10 @@
     var qp = quatAxisAngle(rightAxis, pitch);
     cam.q = quatNormalize(quatMul(quatMul(qy, qp), cam.q));
   }
+  function rollBy(angle){
+    var viewAxis = quatRotate(cam.q, [0,0,1]);
+    cam.q = quatNormalize(quatMul(quatAxisAngle(viewAxis, angle), cam.q));
+  }
 
   // A tap (press + release without moving) toggles fullscreen mode:
   // every overlay fades out, a second tap brings them back.
@@ -1268,6 +1284,7 @@
       if(pointers.size === 2){
         var pts = Array.from(pointers.values());
         canvas._pinchD = Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y);
+        canvas._pinchA = Math.atan2(pts[1].y-pts[0].y, pts[1].x-pts[0].x);
         canvas._pinchC = { x:(pts[0].x+pts[1].x)/2, y:(pts[0].y+pts[1].y)/2 };
         cam.vYaw = 0; cam.vPitch = 0;
       }
@@ -1279,9 +1296,18 @@
     if(pointers.size === 2){
       var pts = Array.from(pointers.values());
       var d = Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y);
+      var angle = Math.atan2(pts[1].y-pts[0].y, pts[1].x-pts[0].x);
       var cx = (pts[0].x+pts[1].x)/2, cy = (pts[0].y+pts[1].y)/2;
       if(canvas._pinchD){
         cam.radius = clamp(cam.radius * canvas._pinchD / Math.max(d, 1), R_MIN, R_MAX);
+        transition = null;
+      }
+      // Twisting two fingers rolls the 3D view around the camera axis.
+      if(canvas._pinchA !== null && canvas._pinchA !== undefined){
+        var da = angle - canvas._pinchA;
+        if(da > Math.PI) da -= Math.PI*2;
+        if(da < -Math.PI) da += Math.PI*2;
+        rollBy(da);
         transition = null;
       }
       // iOS standard: moving both fingers together orbits, like one finger
@@ -1292,6 +1318,7 @@
         transition = null;
       }
       canvas._pinchD = d;
+      canvas._pinchA = angle;
       canvas._pinchC = { x:cx, y:cy };
       return;
     }
@@ -1307,6 +1334,7 @@
     if(!pointers.has(e.pointerId)) return;
     pointers.delete(e.pointerId);
     canvas._pinchD = null;
+    canvas._pinchA = null;
     canvas._pinchC = null;
     if(pointers.size === 1){
       // Re-set drag origin to the remaining pointer's position
@@ -1635,6 +1663,7 @@
   // ---------------------------------------------------------------
   var consoleEl = document.getElementById('console');
   var sheetHandle = document.getElementById('sheet-handle');
+  var langRow = consoleEl.querySelector('.lang-row');
   var sheetOffset = 0, sheetDrag = null;
 
   function sheetMax(){ return Math.max(consoleEl.offsetHeight - sheetHandle.offsetHeight, 0); }
@@ -1644,28 +1673,30 @@
   }
   function setLowered(v){ consoleEl.classList.toggle('lowered', v); }
 
-  sheetHandle.addEventListener('pointerdown', function(e){
-    if(sheetHandle.setPointerCapture){ try{ sheetHandle.setPointerCapture(e.pointerId); }catch(err){} }
+  function beginSheetDrag(e, surface, tapToggles){
+    if(sheetDrag) return;
+    if(surface.setPointerCapture){ try{ surface.setPointerCapture(e.pointerId); }catch(err){} }
     sheetDrag = { y0:e.clientY, base:sheetOffset, max:sheetMax(), moved:false,
-                  lastY:e.clientY, lastT:performance.now(), v:0 };
+                  lastY:e.clientY, lastT:performance.now(), v:0,
+                  pointerId:e.pointerId, tapToggles:tapToggles };
     consoleEl.classList.add('sheet-dragging');
     setLowered(false);
     e.preventDefault();
-  });
-  sheetHandle.addEventListener('pointermove', function(e){
-    if(!sheetDrag) return;
+  }
+  function moveSheetDrag(e){
+    if(!sheetDrag || e.pointerId !== sheetDrag.pointerId) return;
     var now = performance.now();
     var dy = e.clientY - sheetDrag.y0;
     if(Math.abs(dy) > 4) sheetDrag.moved = true;
     sheetDrag.v = (e.clientY - sheetDrag.lastY) / Math.max(now - sheetDrag.lastT, 1);
     sheetDrag.lastY = e.clientY; sheetDrag.lastT = now;
     sheetTo(clamp(sheetDrag.base + dy, 0, sheetDrag.max));
-  });
-  function endSheetDrag(){
-    if(!sheetDrag) return;
+  }
+  function endSheetDrag(e){
+    if(!sheetDrag || (e && e.pointerId !== sheetDrag.pointerId)) return;
     consoleEl.classList.remove('sheet-dragging');
     var open;
-    if(!sheetDrag.moved) open = sheetOffset > 0;            // tap toggles
+    if(!sheetDrag.moved) open = sheetDrag.tapToggles ? sheetOffset > 0 : sheetOffset === 0;
     else if(sheetDrag.v > 0.5) open = false;                // downward flick
     else if(sheetDrag.v < -0.5) open = true;                // upward flick
     else open = sheetOffset < sheetDrag.max / 2;
@@ -1673,8 +1704,22 @@
     setLowered(!open);
     sheetDrag = null;
   }
-  sheetHandle.addEventListener('pointerup', endSheetDrag);
-  sheetHandle.addEventListener('pointercancel', endSheetDrag);
+  function bindSheetDragSurface(surface, tapToggles){
+    surface.addEventListener('pointerdown', function(e){ beginSheetDrag(e, surface, tapToggles); });
+    surface.addEventListener('pointermove', moveSheetDrag);
+    surface.addEventListener('pointerup', endSheetDrag);
+    surface.addEventListener('pointercancel', endSheetDrag);
+  }
+  bindSheetDragSurface(sheetHandle, true);
+  // On phones, the complete row around the language chip is also a drag
+  // surface. The chip itself remains a normal interactive language selector.
+  langRow.addEventListener('pointerdown', function(e){
+    if(!window.matchMedia('(max-width: 640px)').matches || e.target.closest('.lang-chip')) return;
+    beginSheetDrag(e, langRow, true);
+  });
+  langRow.addEventListener('pointermove', moveSheetDrag);
+  langRow.addEventListener('pointerup', endSheetDrag);
+  langRow.addEventListener('pointercancel', endSheetDrag);
   sheetHandle.addEventListener('keydown', function(e){
     if(e.key === 'Enter' || e.key === ' '){
       e.preventDefault();
@@ -1691,3 +1736,5 @@
 
 })();
 </script>
+</body>
+</html>
