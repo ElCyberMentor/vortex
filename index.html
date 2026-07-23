@@ -637,8 +637,7 @@
   var initialLang = 'en';
   try{ initialLang = localStorage.getItem('bh-lang') || ''; }catch(e){}
   if(!I18N[initialLang]){
-    var nav = (navigator.language || 'en').slice(0,2).toLowerCase();
-    initialLang = I18N[nav] ? nav : 'en';
+    initialLang = 'en';
   }
   document.getElementById('lang-select').value = initialLang;
   applyLang(initialLang);
