@@ -421,13 +421,15 @@
   <div class="toggle-row"><span id="lb-auto"></span>
     <label class="switch"><input type="checkbox" id="tg-auto" checked><span class="track"><span class="knob"></span></span></label>
   </div>
-  <div class="music-volume">
-    <input id="music-volume" type="range" min="0" max="100" step="1" value="35">
-    <output class="music-value" id="music-value" for="music-volume">35%</output>
-  </div>
-  <div class="toggle-row">
-    <span id="music-label"></span>
-    <label class="switch"><input type="checkbox" id="music-toggle"><span class="track"><span class="knob"></span></span></label>
+  <div id="secret-music-controls" hidden>
+    <div class="music-volume">
+      <input id="music-volume" type="range" min="0" max="100" step="1" value="35">
+      <output class="music-value" id="music-value" for="music-volume">35%</output>
+    </div>
+    <div class="toggle-row">
+      <span id="music-label"></span>
+      <label class="switch"><input type="checkbox" id="music-toggle"><span class="track"><span class="knob"></span></span></label>
+    </div>
   </div>
   <audio id="background-music" src="assets/orbite-secrete.mp3" preload="auto" loop></audio>
 
@@ -477,7 +479,7 @@
       phHot:"Hot plasma (X-rays)", phWarm:"Warm ionized gas", phCold:"Cold molecular gas", phJet:"Radio jet (AGN)", phBH:"Supermassive black hole",
       layers:"Layers", lAtmo:"Hot atmosphere", lFil:"Infalling filaments", lDisk:"Circumnuclear disk", lJet:"Radio jets", lGal:"Host galaxy (NGC 4696)", lUni:"Cluster galaxies",
       anim:"Animation", pause:"Pause", play:"Play", reset:"Reset view",
-      views:"Viewpoints", vUni:"Universe", vWide:"Overview", vWideSub:"tens of kpc", vDisk:"Nuclear disk", autoRot:"Auto-orbit", credit:"Made with AI — Claude Fable 5 (Anthropic) / SUNO",
+      views:"Viewpoints", vUni:"Universe", vWide:"Overview", vWideSub:"tens of kpc", vDisk:"Nuclear disk", autoRot:"Auto-orbit", credit:"Made with AI — Claude Fable 5 (Anthropic)",
       about:"Help / About this reconstruction",
       gratitudeLabel:"Gratitude to researchers",
       a1:"This scene illustrates how supermassive black holes are fed: hot gas (10⁸ K) in the cluster condenses into filaments that fall inward, lose angular momentum and join a rotating <b>circumnuclear disk</b> (~618 pc, resolved at 10 pc by JWST/NIRSpec). The disk feeds accretion onto the black hole, which launches radio jets that carve cavities in the hot gas — a self-regulating loop.",
@@ -496,7 +498,7 @@
       phHot:"Plasma chaud (rayons X)", phWarm:"Gaz ionisé chaud", phCold:"Gaz moléculaire froid", phJet:"Jet radio (AGN)", phBH:"Trou noir supermassif",
       layers:"Couches", lAtmo:"Atmosphère chaude", lFil:"Filaments en chute", lDisk:"Disque circumnucléaire", lJet:"Jets radio", lGal:"Galaxie hôte (NGC 4696)", lUni:"Galaxies de l'amas",
       anim:"Animation", pause:"Pause", play:"Lecture", reset:"Réinitialiser la vue",
-      views:"Points de vue", vUni:"Univers", vWide:"Vue d'ensemble", vWideSub:"dizaines de kpc", vDisk:"Disque nucléaire", autoRot:"Orbite auto", credit:"Réalisé avec l'IA — Claude Fable 5 (Anthropic) / SUNO",
+      views:"Points de vue", vUni:"Univers", vWide:"Vue d'ensemble", vWideSub:"dizaines de kpc", vDisk:"Disque nucléaire", autoRot:"Orbite auto", credit:"Réalisé avec l'IA — Claude Fable 5 (Anthropic)",
       about:"Aide / À propos de cette reconstitution",
       gratitudeLabel:"Gratitude envers les chercheurs",
       a1:"Cette scène illustre un mécanisme d'alimentation des trous noirs supermassifs : le gaz chaud (10⁸ K) de l'amas se condense en filaments qui, en tombant, perdent leur moment cinétique et rejoignent un <b>disque circumnucléaire</b> en rotation (~618 pc, résolu à 10 pc par JWST/NIRSpec). Ce disque alimente l'accrétion sur le trou noir, qui éjecte des jets radio creusant des cavités dans le gaz chaud — une boucle d'autorégulation.",
@@ -515,7 +517,7 @@
       phHot:"Plasma caliente (rayos X)", phWarm:"Gas ionizado caliente", phCold:"Gas molecular frío", phJet:"Chorro de radio (AGN)", phBH:"Agujero negro supermasivo",
       layers:"Capas", lAtmo:"Atmósfera caliente", lFil:"Filamentos en caída", lDisk:"Disco circumnuclear", lJet:"Chorros de radio", lGal:"Galaxia anfitriona (NGC 4696)", lUni:"Galaxias del cúmulo",
       anim:"Animación", pause:"Pausa", play:"Reproducir", reset:"Restablecer vista",
-      views:"Puntos de vista", vUni:"Universo", vWide:"Vista general", vWideSub:"decenas de kpc", vDisk:"Disco nuclear", autoRot:"Órbita auto", credit:"Creado con IA — Claude Fable 5 (Anthropic) / SUNO",
+      views:"Puntos de vista", vUni:"Universo", vWide:"Vista general", vWideSub:"decenas de kpc", vDisk:"Disco nuclear", autoRot:"Órbita auto", credit:"Creado con IA — Claude Fable 5 (Anthropic)",
       about:"Ayuda / Acerca de esta reconstrucción",
       gratitudeLabel:"Agradecimiento a los investigadores",
       a1:"Esta escena ilustra cómo se alimentan los agujeros negros supermasivos: el gas caliente (10⁸ K) del cúmulo se condensa en filamentos que caen, pierden momento angular y se incorporan a un <b>disco circumnuclear</b> en rotación (~618 pc, resuelto a 10 pc por JWST/NIRSpec). El disco alimenta la acreción sobre el agujero negro, que lanza chorros de radio que excavan cavidades en el gas caliente: un ciclo autorregulado.",
@@ -534,7 +536,7 @@
       phHot:"Plasma quente (raios X)", phWarm:"Gás ionizado quente", phCold:"Gás molecular frio", phJet:"Jato de rádio (AGN)", phBH:"Buraco negro supermassivo",
       layers:"Camadas", lAtmo:"Atmosfera quente", lFil:"Filamentos em queda", lDisk:"Disco circunuclear", lJet:"Jatos de rádio", lGal:"Galáxia hospedeira (NGC 4696)", lUni:"Galáxias do aglomerado",
       anim:"Animação", pause:"Pausar", play:"Reproduzir", reset:"Redefinir vista",
-      views:"Pontos de vista", vUni:"Universo", vWide:"Visão geral", vWideSub:"dezenas de kpc", vDisk:"Disco nuclear", autoRot:"Órbita auto", credit:"Criado com IA — Claude Fable 5 (Anthropic) / SUNO",
+      views:"Pontos de vista", vUni:"Universo", vWide:"Visão geral", vWideSub:"dezenas de kpc", vDisk:"Disco nuclear", autoRot:"Órbita auto", credit:"Criado com IA — Claude Fable 5 (Anthropic)",
       about:"Ajuda / Sobre esta reconstrução",
       gratitudeLabel:"Gratidão aos pesquisadores",
       a1:"Esta cena ilustra como os buracos negros supermassivos se alimentam: o gás quente (10⁸ K) do aglomerado condensa-se em filamentos que caem, perdem momento angular e juntam-se a um <b>disco circunuclear</b> em rotação (~618 pc, resolvido a 10 pc pelo JWST/NIRSpec). O disco alimenta a acreção no buraco negro, que lança jatos de rádio que escavam cavidades no gás quente — um ciclo autorregulado.",
@@ -553,7 +555,7 @@
       phHot:"Heißes Plasma (Röntgen)", phWarm:"Warmes ionisiertes Gas", phCold:"Kaltes molekulares Gas", phJet:"Radio-Jet (AGN)", phBH:"Supermassereiches Schwarzes Loch",
       layers:"Ebenen", lAtmo:"Heiße Atmosphäre", lFil:"Einfallende Filamente", lDisk:"Zirkumnukleare Scheibe", lJet:"Radio-Jets", lGal:"Wirtsgalaxie (NGC 4696)", lUni:"Haufengalaxien",
       anim:"Animation", pause:"Pause", play:"Abspielen", reset:"Ansicht zurücksetzen",
-      views:"Blickwinkel", vUni:"Universum", vWide:"Übersicht", vWideSub:"Dutzende kpc", vDisk:"Kernscheibe", autoRot:"Auto-Orbit", credit:"Erstellt mit KI — Claude Fable 5 (Anthropic) / SUNO",
+      views:"Blickwinkel", vUni:"Universum", vWide:"Übersicht", vWideSub:"Dutzende kpc", vDisk:"Kernscheibe", autoRot:"Auto-Orbit", credit:"Erstellt mit KI — Claude Fable 5 (Anthropic)",
       about:"Hilfe / Über diese Rekonstruktion",
       gratitudeLabel:"Dank an die Forscher",
       a1:"Diese Szene zeigt, wie supermassereiche Schwarze Löcher gefüttert werden: Heißes Gas (10⁸ K) des Haufens kondensiert zu Filamenten, die einfallen, Drehimpuls verlieren und sich einer rotierenden <b>zirkumnuklearen Scheibe</b> anschließen (~618 pc, mit 10 pc Auflösung durch JWST/NIRSpec). Die Scheibe speist die Akkretion auf das Schwarze Loch, das Radio-Jets ausstößt, die Kavitäten in das heiße Gas graben — ein selbstregulierender Kreislauf.",
@@ -572,7 +574,7 @@
       phHot:"Горячая плазма (рентген)", phWarm:"Тёплый ионизованный газ", phCold:"Холодный молекулярный газ", phJet:"Радиоджет (AGN)", phBH:"Сверхмассивная чёрная дыра",
       layers:"Слои", lAtmo:"Горячая атмосфера", lFil:"Падающие волокна", lDisk:"Околоядерный диск", lJet:"Радиоджеты", lGal:"Родительская галактика (NGC 4696)", lUni:"Галактики скопления",
       anim:"Анимация", pause:"Пауза", play:"Пуск", reset:"Сбросить вид",
-      views:"Ракурсы", vUni:"Вселенная", vWide:"Общий вид", vWideSub:"десятки кпк", vDisk:"Ядерный диск", autoRot:"Автоорбита", credit:"Создано с помощью ИИ — Claude Fable 5 (Anthropic) / SUNO",
+      views:"Ракурсы", vUni:"Вселенная", vWide:"Общий вид", vWideSub:"десятки кпк", vDisk:"Ядерный диск", autoRot:"Автоорбита", credit:"Создано с помощью ИИ — Claude Fable 5 (Anthropic)",
       about:"Справка / Об этой реконструкции",
       gratitudeLabel:"Благодарность исследователям",
       a1:"Эта сцена показывает, как питаются сверхмассивные чёрные дыры: горячий газ (10⁸ K) скопления конденсируется в волокна, которые падают внутрь, теряют угловой момент и вливаются во вращающийся <b>околоядерный диск</b> (~618 пк, разрешение 10 пк, JWST/NIRSpec). Диск питает аккрецию на чёрную дыру, которая запускает радиоджеты, выдувающие полости в горячем газе, — саморегулирующийся цикл.",
@@ -591,7 +593,7 @@
       phHot:"炽热等离子体（X射线）", phWarm:"温热电离气体", phCold:"冷分子气体", phJet:"射电喷流（AGN）", phBH:"超大质量黑洞",
       layers:"图层", lAtmo:"炽热大气", lFil:"坠落细丝", lDisk:"核周盘", lJet:"射电喷流", lGal:"宿主星系（NGC 4696）", lUni:"星系团成员星系",
       anim:"动画", pause:"暂停", play:"播放", reset:"重置视角",
-      views:"视角", vUni:"宇宙", vWide:"全景", vWideSub:"数十 kpc", vDisk:"核盘", autoRot:"自动环绕", credit:"由 AI 制作 — Claude Fable 5（Anthropic） / SUNO",
+      views:"视角", vUni:"宇宙", vWide:"全景", vWideSub:"数十 kpc", vDisk:"核盘", autoRot:"自动环绕", credit:"由 AI 制作 — Claude Fable 5（Anthropic）",
       about:"帮助 / 关于此重构",
       gratitudeLabel:"对研究人员的感谢",
       a1:"这一场景展示了超大质量黑洞的进食机制：星系团中的炽热气体（10⁸ K）凝结成细丝，向内坠落并失去角动量，汇入一个旋转的<b>核周盘</b>（约 618 秒差距，JWST/NIRSpec 分辨率达 10 秒差距）。该盘为黑洞吸积供给物质，黑洞则喷出射电喷流，在热气体中开凿空腔——形成自我调节的循环。",
@@ -610,7 +612,7 @@
       phHot:"高温プラズマ（X線）", phWarm:"電離ガス", phCold:"低温分子ガス", phJet:"電波ジェット（AGN）", phBH:"超大質量ブラックホール",
       layers:"レイヤー", lAtmo:"高温大気", lFil:"落下するフィラメント", lDisk:"核周円盤", lJet:"電波ジェット", lGal:"母銀河（NGC 4696）", lUni:"銀河団の銀河",
       anim:"アニメーション", pause:"一時停止", play:"再生", reset:"視点をリセット",
-      views:"視点", vUni:"宇宙", vWide:"全体像", vWideSub:"数十 kpc", vDisk:"核円盤", autoRot:"自動軌道", credit:"AI 制作 — Claude Fable 5（Anthropic） / SUNO",
+      views:"視点", vUni:"宇宙", vWide:"全体像", vWideSub:"数十 kpc", vDisk:"核円盤", autoRot:"自動軌道", credit:"AI 制作 — Claude Fable 5（Anthropic）",
       about:"ヘルプ / この再現について",
       gratitudeLabel:"研究者への感謝",
       a1:"このシーンは超大質量ブラックホールへの物質供給を示しています。銀河団の高温ガス（10⁸ K）がフィラメントに凝縮して落下し、角運動量を失って回転する<b>核周円盤</b>（約618 pc、JWST/NIRSpecで10 pcの分解能）に合流します。円盤はブラックホールへの降着を促し、ブラックホールは電波ジェットを噴出して高温ガスに空洞を穿つ——自己調節のループです。",
@@ -629,7 +631,7 @@
       phHot:"بلازما ساخنة (أشعة سينية)", phWarm:"غاز متأين دافئ", phCold:"غاز جزيئي بارد", phJet:"نفاث راديوي (AGN)", phBH:"ثقب أسود فائق الكتلة",
       layers:"الطبقات", lAtmo:"الغلاف الساخن", lFil:"خيوط ساقطة", lDisk:"القرص المحيط بالنواة", lJet:"نفاثات راديوية", lGal:"المجرة المضيفة (NGC 4696)", lUni:"مجرات العنقود",
       anim:"الحركة", pause:"إيقاف مؤقت", play:"تشغيل", reset:"إعادة ضبط العرض",
-      views:"وجهات النظر", vUni:"الكون", vWide:"نظرة عامة", vWideSub:"عشرات الكيلوفراسخ", vDisk:"القرص النووي", autoRot:"مدار تلقائي", credit:"أُنشئ بالذكاء الاصطناعي — Claude Fable 5 (Anthropic) / SUNO",
+      views:"وجهات النظر", vUni:"الكون", vWide:"نظرة عامة", vWideSub:"عشرات الكيلوفراسخ", vDisk:"القرص النووي", autoRot:"مدار تلقائي", credit:"أُنشئ بالذكاء الاصطناعي — Claude Fable 5 (Anthropic)",
       about:"المساعدة / حول هذا التصور",
       gratitudeLabel:"شكر للباحثين",
       a1:"يوضّح هذا المشهد كيف تتغذى الثقوب السوداء فائقة الكتلة: يتكاثف الغاز الساخن (10⁸ كلفن) في العنقود إلى خيوط تسقط نحو الداخل وتفقد زخمها الزاوي لتنضم إلى <b>قرص محيط بالنواة</b> دوّار (~618 فرسخ فلكي، بدقة 10 فراسخ بواسطة JWST/NIRSpec). يغذي القرص التراكم على الثقب الأسود الذي يطلق نفاثات راديوية تحفر تجاويف في الغاز الساخن — حلقة ذاتية التنظيم.",
@@ -648,7 +650,7 @@
       phHot:"गर्म प्लाज़्मा (एक्स-रे)", phWarm:"आयनित गैस", phCold:"ठंडी आणविक गैस", phJet:"रेडियो जेट (AGN)", phBH:"महाविशाल ब्लैक होल",
       layers:"परतें", lAtmo:"गर्म वायुमंडल", lFil:"गिरते तंतु", lDisk:"परिनाभिकीय डिस्क", lJet:"रेडियो जेट", lGal:"मेज़बान आकाशगंगा (NGC 4696)", lUni:"क्लस्टर की आकाशगंगाएँ",
       anim:"एनीमेशन", pause:"रोकें", play:"चलाएँ", reset:"दृश्य रीसेट करें",
-      views:"दृष्टिकोण", vUni:"ब्रह्मांड", vWide:"समग्र दृश्य", vWideSub:"दसियों kpc", vDisk:"नाभिकीय डिस्क", autoRot:"स्वतः परिक्रमा", credit:"AI द्वारा निर्मित — Claude Fable 5 (Anthropic) / SUNO",
+      views:"दृष्टिकोण", vUni:"ब्रह्मांड", vWide:"समग्र दृश्य", vWideSub:"दसियों kpc", vDisk:"नाभिकीय डिस्क", autoRot:"स्वतः परिक्रमा", credit:"AI द्वारा निर्मित — Claude Fable 5 (Anthropic)",
       about:"सहायता / इस पुनर्निर्माण के बारे में",
       gratitudeLabel:"शोधकर्ताओं को धन्यवाद",
       a1:"यह दृश्य दिखाता है कि महाविशाल ब्लैक होल कैसे भोजन पाते हैं: क्लस्टर की गर्म गैस (10⁸ K) तंतुओं में संघनित होकर भीतर गिरती है, कोणीय संवेग खोती है और एक घूमती <b>परिनाभिकीय डिस्क</b> (~618 pc, JWST/NIRSpec द्वारा 10 pc विभेदन) में मिल जाती है। यह डिस्क ब्लैक होल पर अभिवृद्धि को पोषित करती है, जो रेडियो जेट छोड़ता है जो गर्म गैस में गुहाएँ बनाते हैं — एक स्व-नियंत्रित चक्र।",
@@ -918,6 +920,12 @@
       o.textContent = (o.value === currentLang) ? o.value.toUpperCase() : o.value.toUpperCase() + " · " + NATIVE[o.value];
     }
   }
+  function updateCredit(){
+    var t = I18N[currentLang] || I18N.en;
+    var controls = document.getElementById('secret-music-controls');
+    var musicVisible = controls && !controls.hidden;
+    document.getElementById('credit').textContent = t.credit + (musicVisible ? ' / SUNO' : '');
+  }
   function applyLang(lang){
     var t = I18N[lang] || I18N.en;
     currentLang = lang;
@@ -953,7 +961,7 @@
     document.getElementById('view-wide').innerHTML = t.vWide + '<br><span style="opacity:.6">' + t.vWideSub + '</span>';
     document.getElementById('view-disk').innerHTML = t.vDisk + '<br><span style="opacity:.6">~618 pc</span>';
     document.getElementById('lb-auto').textContent = t.autoRot;
-    document.getElementById('credit').textContent = t.credit;
+    updateCredit();
     document.getElementById('about-summary').textContent = t.about;
     document.getElementById('about-reconstruction-label').textContent = t.about.replace(/^.*?\/\s*/, '');
     renderHelp();
@@ -989,6 +997,7 @@
   var musicToggle = document.getElementById('music-toggle');
   var musicVolume = document.getElementById('music-volume');
   var musicValue = document.getElementById('music-value');
+  var secretMusicControls = document.getElementById('secret-music-controls');
   var musicShouldPlay = false;
   var lastMusicVolume = .35;
   try{
@@ -1042,6 +1051,12 @@
   }
   musicToggle.addEventListener('change', function(e){
     setMusicPlaying(e.target.checked);
+  });
+  document.addEventListener('keydown', function(e){
+    if(!e.ctrlKey || e.altKey || e.metaKey || e.repeat || e.key.toLowerCase() !== 'm') return;
+    e.preventDefault();
+    secretMusicControls.hidden = !secretMusicControls.hidden;
+    updateCredit();
   });
   document.addEventListener('keydown', function(e){
     if(e.code !== 'Space' || e.repeat) return;
