@@ -421,14 +421,14 @@
   <div class="toggle-row"><span id="lb-auto"></span>
     <label class="switch"><input type="checkbox" id="tg-auto" checked><span class="track"><span class="knob"></span></span></label>
   </div>
-  <div id="secret-music-controls" hidden>
+  <div id="music-controls">
     <div class="music-volume">
       <input id="music-volume" type="range" min="0" max="100" step="1" value="35">
       <output class="music-value" id="music-value" for="music-volume">35%</output>
     </div>
     <div class="toggle-row">
       <span id="music-label"></span>
-      <label class="switch"><input type="checkbox" id="music-toggle"><span class="track"><span class="knob"></span></span></label>
+      <label class="switch"><input type="checkbox" id="music-toggle" checked><span class="track"><span class="knob"></span></span></label>
     </div>
   </div>
   <audio id="background-music" src="assets/orbite-secrete.mp3" preload="auto" loop></audio>
@@ -922,9 +922,7 @@
   }
   function updateCredit(){
     var t = I18N[currentLang] || I18N.en;
-    var controls = document.getElementById('secret-music-controls');
-    var musicVisible = controls && !controls.hidden;
-    document.getElementById('credit').textContent = t.credit + (musicVisible ? ' / SUNO' : '');
+    document.getElementById('credit').textContent = t.credit + ' / SUNO';
   }
   function applyLang(lang){
     var t = I18N[lang] || I18N.en;
@@ -997,11 +995,11 @@
   var musicToggle = document.getElementById('music-toggle');
   var musicVolume = document.getElementById('music-volume');
   var musicValue = document.getElementById('music-value');
-  var secretMusicControls = document.getElementById('secret-music-controls');
-  var musicShouldPlay = false;
+  var musicShouldPlay = true;
   var lastMusicVolume = .35;
   try{
-    musicShouldPlay = localStorage.getItem('bh-music-playing') === 'true';
+    var savedMusicPlaying = localStorage.getItem('bh-music-playing-v2');
+    if(savedMusicPlaying !== null) musicShouldPlay = savedMusicPlaying === 'true';
     var savedMusicVolume = parseFloat(localStorage.getItem('bh-music-volume'));
     if(isFinite(savedMusicVolume)) lastMusicVolume = Math.max(0, Math.min(1, savedMusicVolume));
   }catch(e){}
@@ -1038,7 +1036,7 @@
   }
   function setMusicPlaying(shouldPlay){
     musicShouldPlay = shouldPlay;
-    try{ localStorage.setItem('bh-music-playing', String(shouldPlay)); }catch(e){}
+    try{ localStorage.setItem('bh-music-playing-v2', String(shouldPlay)); }catch(e){}
     if(shouldPlay){
       startMusic();
     }else{
@@ -1051,12 +1049,6 @@
   }
   musicToggle.addEventListener('change', function(e){
     setMusicPlaying(e.target.checked);
-  });
-  document.addEventListener('keydown', function(e){
-    if(!e.ctrlKey || e.altKey || e.metaKey || e.repeat || e.key.toLowerCase() !== 'm') return;
-    e.preventDefault();
-    secretMusicControls.hidden = !secretMusicControls.hidden;
-    updateCredit();
   });
   document.addEventListener('keydown', function(e){
     if(e.code !== 'Space' || e.repeat) return;
