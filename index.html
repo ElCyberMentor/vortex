@@ -183,6 +183,47 @@
 
   .music-volume{display:flex; align-items:center; gap:.5rem; margin:.05rem 0 .2rem;}
   .music-volume input{min-width:0; flex:1; height:16px; accent-color:var(--accent);}
+  .speed-row input[type=range],
+  .music-volume input[type=range]{
+    appearance:none; -webkit-appearance:none;
+    background:transparent; border:0; padding:0;
+  }
+  .speed-row input[type=range]::-webkit-slider-runnable-track,
+  .music-volume input[type=range]::-webkit-slider-runnable-track{
+    height:3px; border:0; border-radius:999px;
+    background:rgba(140,158,199,.22);
+  }
+  .speed-row input[type=range]::-webkit-slider-thumb,
+  .music-volume input[type=range]::-webkit-slider-thumb{
+    appearance:none; -webkit-appearance:none;
+    width:10px; height:10px; margin-top:-3.5px;
+    border:0; border-radius:50%; background:var(--accent);
+    box-shadow:0 0 0 2px rgba(11,16,30,.82);
+  }
+  .speed-row input[type=range]::-moz-range-track,
+  .music-volume input[type=range]::-moz-range-track{
+    height:3px; border:0; border-radius:999px;
+    background:rgba(140,158,199,.22);
+  }
+  .speed-row input[type=range]::-moz-range-progress,
+  .music-volume input[type=range]::-moz-range-progress{
+    height:3px; border-radius:999px; background:rgba(105,230,220,.5);
+  }
+  .speed-row input[type=range]::-moz-range-thumb,
+  .music-volume input[type=range]::-moz-range-thumb{
+    width:10px; height:10px; border:0; border-radius:50%;
+    background:var(--accent); box-shadow:0 0 0 2px rgba(11,16,30,.82);
+  }
+  .speed-row input[type=range]:focus-visible,
+  .music-volume input[type=range]:focus-visible{outline:none;}
+  .speed-row input[type=range]:focus-visible::-webkit-slider-thumb,
+  .music-volume input[type=range]:focus-visible::-webkit-slider-thumb{
+    box-shadow:0 0 0 3px var(--accent-dim);
+  }
+  .speed-row input[type=range]:focus-visible::-moz-range-thumb,
+  .music-volume input[type=range]:focus-visible::-moz-range-thumb{
+    box-shadow:0 0 0 3px var(--accent-dim);
+  }
   .music-value{
     width:3em; text-align:right; font-family:var(--font-mono);
     font-variant-numeric:tabular-nums; font-size:.65rem; color:var(--text-2);
@@ -386,7 +427,7 @@
   </div>
   <div class="toggle-row">
     <span id="music-label"></span>
-    <label class="switch"><input type="checkbox" id="music-toggle" checked><span class="track"><span class="knob"></span></span></label>
+    <label class="switch"><input type="checkbox" id="music-toggle"><span class="track"><span class="knob"></span></span></label>
   </div>
   <audio id="background-music" src="assets/orbite-secrete.mp3" preload="auto" loop></audio>
 
@@ -646,6 +687,7 @@
       ],
       touch:[
         ["Click / tap","On an empty area of the scene, hide or show all interface overlays."],
+        ["Double-click / double-tap","Pause or resume the background music."],
         ["Drag","Orbit the 3D camera around the scene."],
         ["Wheel / trackpad","Zoom in or out."],
         ["Pinch","Zoom with two fingers."],
@@ -666,6 +708,7 @@
       ],
       touch:[
         ["Clic / tap","Sur une zone vide de la scène, masquer ou afficher toute l’interface."],
+        ["Double clic / double tap","Mettre en pause ou reprendre la musique de fond."],
         ["Glisser","Faire orbiter la caméra 3D autour de la scène."],
         ["Molette / trackpad","Zoomer ou dézoomer."],
         ["Pincement","Zoomer avec deux doigts."],
@@ -686,6 +729,7 @@
       ],
       touch:[
         ["Clic / toque","En una zona vacía de la escena, ocultar o mostrar toda la interfaz."],
+        ["Doble clic / doble toque","Pausar o reanudar la música de fondo."],
         ["Arrastrar","Orbitar la cámara 3D alrededor de la escena."],
         ["Rueda / trackpad","Acercar o alejar la vista."],
         ["Pellizcar","Hacer zoom con dos dedos."],
@@ -706,6 +750,7 @@
       ],
       touch:[
         ["Clique / toque","Numa área vazia da cena, ocultar ou mostrar toda a interface."],
+        ["Duplo clique / duplo toque","Pausar ou retomar a música de fundo."],
         ["Arrastar","Orbitar a câmara 3D em redor da cena."],
         ["Roda / trackpad","Aumentar ou diminuir o zoom."],
         ["Pinçar","Fazer zoom com dois dedos."],
@@ -726,6 +771,7 @@
       ],
       touch:[
         ["Klick / Tippen","Auf einer freien Stelle der Szene die gesamte Oberfläche aus- oder einblenden."],
+        ["Doppelklick / Doppeltippen","Die Hintergrundmusik pausieren oder fortsetzen."],
         ["Ziehen","Die 3D-Kamera um die Szene bewegen."],
         ["Mausrad / Trackpad","Ein- oder auszoomen."],
         ["Zwei-Finger-Zoom","Mit zwei Fingern zoomen."],
@@ -746,6 +792,7 @@
       ],
       touch:[
         ["Щелчок / касание","На пустом участке сцены скрыть или показать весь интерфейс."],
+        ["Двойной щелчок / касание","Приостановить или продолжить фоновую музыку."],
         ["Перетаскивание","Вращать 3D-камеру вокруг сцены."],
         ["Колесо / трекпад","Приблизить или отдалить вид."],
         ["Щипок","Масштабировать двумя пальцами."],
@@ -766,6 +813,7 @@
       ],
       touch:[
         ["点击 / 轻触","在场景空白处隐藏或显示全部界面。"],
+        ["双击 / 双击轻触","暂停或继续播放背景音乐。"],
         ["拖动","让 3D 相机围绕场景旋转。"],
         ["滚轮 / 触控板","放大或缩小。"],
         ["双指捏合","用两根手指缩放。"],
@@ -786,6 +834,7 @@
       ],
       touch:[
         ["クリック / タップ","シーンの何もない場所で、インターフェース全体を表示または非表示にします。"],
+        ["ダブルクリック / ダブルタップ","背景音楽を一時停止または再生します。"],
         ["ドラッグ","3D カメラをシーンの周囲に回転させます。"],
         ["ホイール / トラックパッド","拡大または縮小します。"],
         ["ピンチ","2 本の指で拡大・縮小します。"],
@@ -806,6 +855,7 @@
       ],
       touch:[
         ["نقر / لمس","إخفاء الواجهة بالكامل أو إظهارها عند النقر على مساحة فارغة من المشهد."],
+        ["نقر مزدوج / لمس مزدوج","إيقاف موسيقى الخلفية مؤقتًا أو استئنافها."],
         ["سحب","تدوير الكاميرا ثلاثية الأبعاد حول المشهد."],
         ["عجلة الفأرة / لوحة اللمس","التكبير أو التصغير."],
         ["ضم الإصبعين","التكبير أو التصغير بإصبعين."],
@@ -826,6 +876,7 @@
       ],
       touch:[
         ["क्लिक / टैप","सीन की खाली जगह पर पूरे इंटरफ़ेस को छिपाएँ या दिखाएँ।"],
+        ["डबल क्लिक / डबल टैप","बैकग्राउंड संगीत रोकें या फिर चलाएँ।"],
         ["ड्रैग","3D कैमरे को सीन के चारों ओर घुमाएँ।"],
         ["व्हील / ट्रैकपैड","ज़ूम इन या ज़ूम आउट करें।"],
         ["पिंच","दो उँगलियों से ज़ूम करें।"],
@@ -938,9 +989,10 @@
   var musicToggle = document.getElementById('music-toggle');
   var musicVolume = document.getElementById('music-volume');
   var musicValue = document.getElementById('music-value');
-  var musicShouldPlay = true;
+  var musicShouldPlay = false;
   var lastMusicVolume = .35;
   try{
+    musicShouldPlay = localStorage.getItem('bh-music-playing') === 'true';
     var savedMusicVolume = parseFloat(localStorage.getItem('bh-music-volume'));
     if(isFinite(savedMusicVolume)) lastMusicVolume = Math.max(0, Math.min(1, savedMusicVolume));
   }catch(e){}
@@ -977,6 +1029,7 @@
   }
   function setMusicPlaying(shouldPlay){
     musicShouldPlay = shouldPlay;
+    try{ localStorage.setItem('bh-music-playing', String(shouldPlay)); }catch(e){}
     if(shouldPlay){
       startMusic();
     }else{
@@ -1639,10 +1692,35 @@
     cam.q = quatNormalize(quatMul(quatAxisAngle(viewAxis, angle), cam.q));
   }
 
-  // A tap (press + release without moving) toggles fullscreen mode:
-  // every overlay fades out, a second tap brings them back.
+  // A single tap toggles the interface overlays. A double tap pauses or
+  // resumes the background music. The short delay distinguishes both.
   var tap = null;
   var TAP_SLOP = 9, TAP_MS = 400;
+  var DOUBLE_TAP_MS = 300, DOUBLE_TAP_SLOP = 28;
+  var pendingSceneTap = null;
+
+  function handleSceneTap(x, y, now){
+    if(pendingSceneTap &&
+       now - pendingSceneTap.t <= DOUBLE_TAP_MS &&
+       Math.hypot(x-pendingSceneTap.x, y-pendingSceneTap.y) <= DOUBLE_TAP_SLOP){
+      clearTimeout(pendingSceneTap.timer);
+      pendingSceneTap = null;
+      toggleMusicPlayback();
+      return;
+    }
+    if(pendingSceneTap){
+      clearTimeout(pendingSceneTap.timer);
+      document.body.classList.toggle('fullscreen');
+    }
+    var candidate = {x:x, y:y, t:now, timer:null};
+    candidate.timer = setTimeout(function(){
+      if(pendingSceneTap === candidate){
+        document.body.classList.toggle('fullscreen');
+        pendingSceneTap = null;
+      }
+    }, DOUBLE_TAP_MS);
+    pendingSceneTap = candidate;
+  }
 
   canvas.addEventListener('pointerdown', function(e){
     if(canvas.setPointerCapture){ try{ canvas.setPointerCapture(e.pointerId); }catch(err){} }
@@ -1715,7 +1793,7 @@
     } else if(pointers.size === 0) {
       setDragging(false);
       if(e.type === 'pointerup' && tap && performance.now() - tap.t < TAP_MS){
-        document.body.classList.toggle('fullscreen');
+        handleSceneTap(tap.x, tap.y, performance.now());
       }
       tap = null;
     }
@@ -1829,11 +1907,12 @@
 
   var playing = true;
   var btnPlay = document.getElementById('btn-play');
-  btnPlay.addEventListener('click', function(){
+  function toggleSceneAnimation(){
     playing = !playing;
     var t = I18N[currentLang] || I18N.en;
     btnPlay.textContent = playing ? t.pause : t.play;
-  });
+  }
+  btnPlay.addEventListener('click', toggleSceneAnimation);
   var speed = 0.8;
   var speedInput = document.getElementById('speed');
   var speedVal = document.getElementById('speed-val');
