@@ -181,6 +181,13 @@
     font-size:.72rem; color:var(--text-2); width:2.6em; text-align:right;
   }
 
+  .music-volume{display:flex; align-items:center; gap:.5rem; margin:.05rem 0 .2rem;}
+  .music-volume input{min-width:0; flex:1; height:16px; accent-color:var(--accent);}
+  .music-value{
+    width:3em; text-align:right; font-family:var(--font-mono);
+    font-variant-numeric:tabular-nums; font-size:.65rem; color:var(--text-2);
+  }
+
   details.info{margin-top:.9rem; border-top:1px solid var(--hairline); padding-top:.6rem;}
   details.info summary{
     font-family:var(--font-mono); font-size:.62rem; letter-spacing:.14em;
@@ -193,6 +200,28 @@
   details.info p{font-size:.76rem; line-height:1.55; color:var(--text-2); margin:.55rem 0;}
   details.info p b{color:var(--text-1);}
   details.info .cite{font-family:var(--font-mono); font-size:.65rem; color:var(--text-3-solid); line-height:1.6;}
+  .help-block{margin:.7rem 0 .95rem; padding-bottom:.75rem; border-bottom:1px solid var(--hairline);}
+  .help-block .section-label{margin:.7rem 0 .45rem;}
+  .help-group-label{
+    margin:.65rem 0 .4rem; font-family:var(--font-mono); font-size:.64rem;
+    letter-spacing:.06em; color:var(--text-1);
+  }
+  .help-list{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.42rem; margin:0;}
+  .help-item{
+    min-width:0; padding:.42rem .48rem;
+    border:1px solid var(--hairline); border-radius:6px;
+    background:rgba(140,158,199,.055);
+  }
+  .help-list dt,.help-list dd{margin:0;}
+  .help-list dd{margin-top:.3rem; font-size:.69rem; line-height:1.4; color:var(--text-2);}
+  .help-list kbd{
+    display:inline-block; max-width:100%; padding:.16rem .34rem;
+    border:1px solid var(--hairline); border-bottom-color:rgba(166,181,218,.42);
+    border-radius:4px; background:rgba(140,158,199,.11);
+    font-family:var(--font-mono); font-size:.59rem; line-height:1.35;
+    color:var(--text-1); white-space:normal;
+  }
+  @media(max-width:380px){.help-list{grid-template-columns:1fr;}}
 
   .dimmed{opacity:.32; pointer-events:none; transition:opacity .25s ease;}
 
@@ -345,12 +374,21 @@
     <button id="btn-reset" style="flex:1;"></button>
   </div>
   <div class="speed-row">
-    <input type="range" id="speed" min="0.1" max="3" step="0.05" value="0.8" aria-label="Speed">
+    <input type="range" id="speed" min="0.01" max="3" step="0.01" value="0.8" aria-label="Speed">
     <span class="speed-val" id="speed-val">0.8×</span>
   </div>
   <div class="toggle-row"><span id="lb-auto"></span>
-    <label class="switch"><input type="checkbox" id="tg-auto"><span class="track"><span class="knob"></span></span></label>
+    <label class="switch"><input type="checkbox" id="tg-auto" checked><span class="track"><span class="knob"></span></span></label>
   </div>
+  <div class="music-volume">
+    <input id="music-volume" type="range" min="0" max="100" step="1" value="35">
+    <output class="music-value" id="music-value" for="music-volume">35%</output>
+  </div>
+  <div class="toggle-row">
+    <span id="music-label"></span>
+    <label class="switch"><input type="checkbox" id="music-toggle" checked><span class="track"><span class="knob"></span></span></label>
+  </div>
+  <audio id="background-music" src="assets/orbite-secrete.mp3" preload="auto" loop></audio>
 
   <p class="section-label" id="lbl-views"></p>
   <div class="btn-row">
@@ -361,6 +399,14 @@
 
   <details class="info">
     <summary id="about-summary"></summary>
+    <div class="help-block">
+      <p class="section-label" id="help-title"></p>
+      <p class="help-group-label" id="help-keyboard-label"></p>
+      <dl class="help-list" id="help-keyboard"></dl>
+      <p class="help-group-label" id="help-gestures-label"></p>
+      <dl class="help-list" id="help-gestures"></dl>
+    </div>
+    <p class="section-label" id="about-reconstruction-label"></p>
     <p id="about-1"></p>
     <p id="about-2"></p>
     <p id="about-3"></p>
@@ -390,8 +436,8 @@
       phHot:"Hot plasma (X-rays)", phWarm:"Warm ionized gas", phCold:"Cold molecular gas", phJet:"Radio jet (AGN)", phBH:"Supermassive black hole",
       layers:"Layers", lAtmo:"Hot atmosphere", lFil:"Infalling filaments", lDisk:"Circumnuclear disk", lJet:"Radio jets", lGal:"Host galaxy (NGC 4696)", lUni:"Cluster galaxies",
       anim:"Animation", pause:"Pause", play:"Play", reset:"Reset view",
-      views:"Viewpoints", vUni:"Universe", vWide:"Overview", vWideSub:"tens of kpc", vDisk:"Nuclear disk", autoRot:"Auto-orbit", credit:"Made with AI — Claude Fable 5 (Anthropic)",
-      about:"About this reconstruction",
+      views:"Viewpoints", vUni:"Universe", vWide:"Overview", vWideSub:"tens of kpc", vDisk:"Nuclear disk", autoRot:"Auto-orbit", credit:"Made with AI — Claude Fable 5 (Anthropic) / SUNO",
+      about:"Help / About this reconstruction",
       gratitudeLabel:"Gratitude to researchers",
       a1:"This scene illustrates how supermassive black holes are fed: hot gas (10⁸ K) in the cluster condenses into filaments that fall inward, lose angular momentum and join a rotating <b>circumnuclear disk</b> (~618 pc, resolved at 10 pc by JWST/NIRSpec). The disk feeds accretion onto the black hole, which launches radio jets that carve cavities in the hot gas — a self-regulating loop.",
       a2:"<b>Scales are compressed.</b> The filaments actually span tens of kiloparsecs; the host galaxy and cluster are far larger. This reconstruction compresses scales so the whole phenomenon fits in one view — it is not a literal rendering of the JWST data.",
@@ -409,8 +455,8 @@
       phHot:"Plasma chaud (rayons X)", phWarm:"Gaz ionisé chaud", phCold:"Gaz moléculaire froid", phJet:"Jet radio (AGN)", phBH:"Trou noir supermassif",
       layers:"Couches", lAtmo:"Atmosphère chaude", lFil:"Filaments en chute", lDisk:"Disque circumnucléaire", lJet:"Jets radio", lGal:"Galaxie hôte (NGC 4696)", lUni:"Galaxies de l'amas",
       anim:"Animation", pause:"Pause", play:"Lecture", reset:"Réinitialiser la vue",
-      views:"Points de vue", vUni:"Univers", vWide:"Vue d'ensemble", vWideSub:"dizaines de kpc", vDisk:"Disque nucléaire", autoRot:"Orbite auto", credit:"Réalisé avec l'IA — Claude Fable 5 (Anthropic)",
-      about:"À propos de cette reconstitution",
+      views:"Points de vue", vUni:"Univers", vWide:"Vue d'ensemble", vWideSub:"dizaines de kpc", vDisk:"Disque nucléaire", autoRot:"Orbite auto", credit:"Réalisé avec l'IA — Claude Fable 5 (Anthropic) / SUNO",
+      about:"Aide / À propos de cette reconstitution",
       gratitudeLabel:"Gratitude envers les chercheurs",
       a1:"Cette scène illustre un mécanisme d'alimentation des trous noirs supermassifs : le gaz chaud (10⁸ K) de l'amas se condense en filaments qui, en tombant, perdent leur moment cinétique et rejoignent un <b>disque circumnucléaire</b> en rotation (~618 pc, résolu à 10 pc par JWST/NIRSpec). Ce disque alimente l'accrétion sur le trou noir, qui éjecte des jets radio creusant des cavités dans le gaz chaud — une boucle d'autorégulation.",
       a2:"<b>Les échelles sont compressées.</b> Les filaments s'étendent en réalité sur des dizaines de kiloparsecs ; la galaxie hôte et l'amas sont bien plus vastes. Cette reconstitution compresse les échelles pour rendre le phénomène observable d'un seul regard ; ce n'est pas un rendu littéral des données JWST.",
@@ -428,8 +474,8 @@
       phHot:"Plasma caliente (rayos X)", phWarm:"Gas ionizado caliente", phCold:"Gas molecular frío", phJet:"Chorro de radio (AGN)", phBH:"Agujero negro supermasivo",
       layers:"Capas", lAtmo:"Atmósfera caliente", lFil:"Filamentos en caída", lDisk:"Disco circumnuclear", lJet:"Chorros de radio", lGal:"Galaxia anfitriona (NGC 4696)", lUni:"Galaxias del cúmulo",
       anim:"Animación", pause:"Pausa", play:"Reproducir", reset:"Restablecer vista",
-      views:"Puntos de vista", vUni:"Universo", vWide:"Vista general", vWideSub:"decenas de kpc", vDisk:"Disco nuclear", autoRot:"Órbita auto", credit:"Creado con IA — Claude Fable 5 (Anthropic)",
-      about:"Acerca de esta reconstrucción",
+      views:"Puntos de vista", vUni:"Universo", vWide:"Vista general", vWideSub:"decenas de kpc", vDisk:"Disco nuclear", autoRot:"Órbita auto", credit:"Creado con IA — Claude Fable 5 (Anthropic) / SUNO",
+      about:"Ayuda / Acerca de esta reconstrucción",
       gratitudeLabel:"Agradecimiento a los investigadores",
       a1:"Esta escena ilustra cómo se alimentan los agujeros negros supermasivos: el gas caliente (10⁸ K) del cúmulo se condensa en filamentos que caen, pierden momento angular y se incorporan a un <b>disco circumnuclear</b> en rotación (~618 pc, resuelto a 10 pc por JWST/NIRSpec). El disco alimenta la acreción sobre el agujero negro, que lanza chorros de radio que excavan cavidades en el gas caliente: un ciclo autorregulado.",
       a2:"<b>Las escalas están comprimidas.</b> Los filamentos abarcan en realidad decenas de kilopársecs; la galaxia anfitriona y el cúmulo son mucho mayores. Esta reconstrucción comprime las escalas para abarcar el fenómeno de un solo vistazo; no es una representación literal de los datos del JWST.",
@@ -447,8 +493,8 @@
       phHot:"Plasma quente (raios X)", phWarm:"Gás ionizado quente", phCold:"Gás molecular frio", phJet:"Jato de rádio (AGN)", phBH:"Buraco negro supermassivo",
       layers:"Camadas", lAtmo:"Atmosfera quente", lFil:"Filamentos em queda", lDisk:"Disco circunuclear", lJet:"Jatos de rádio", lGal:"Galáxia hospedeira (NGC 4696)", lUni:"Galáxias do aglomerado",
       anim:"Animação", pause:"Pausar", play:"Reproduzir", reset:"Redefinir vista",
-      views:"Pontos de vista", vUni:"Universo", vWide:"Visão geral", vWideSub:"dezenas de kpc", vDisk:"Disco nuclear", autoRot:"Órbita auto", credit:"Criado com IA — Claude Fable 5 (Anthropic)",
-      about:"Sobre esta reconstrução",
+      views:"Pontos de vista", vUni:"Universo", vWide:"Visão geral", vWideSub:"dezenas de kpc", vDisk:"Disco nuclear", autoRot:"Órbita auto", credit:"Criado com IA — Claude Fable 5 (Anthropic) / SUNO",
+      about:"Ajuda / Sobre esta reconstrução",
       gratitudeLabel:"Gratidão aos pesquisadores",
       a1:"Esta cena ilustra como os buracos negros supermassivos se alimentam: o gás quente (10⁸ K) do aglomerado condensa-se em filamentos que caem, perdem momento angular e juntam-se a um <b>disco circunuclear</b> em rotação (~618 pc, resolvido a 10 pc pelo JWST/NIRSpec). O disco alimenta a acreção no buraco negro, que lança jatos de rádio que escavam cavidades no gás quente — um ciclo autorregulado.",
       a2:"<b>As escalas estão comprimidas.</b> Os filamentos estendem-se na verdade por dezenas de kiloparsecs; a galáxia hospedeira e o aglomerado são muito maiores. Esta reconstrução comprime as escalas para mostrar o fenômeno num só olhar; não é uma representação literal dos dados do JWST.",
@@ -466,8 +512,8 @@
       phHot:"Heißes Plasma (Röntgen)", phWarm:"Warmes ionisiertes Gas", phCold:"Kaltes molekulares Gas", phJet:"Radio-Jet (AGN)", phBH:"Supermassereiches Schwarzes Loch",
       layers:"Ebenen", lAtmo:"Heiße Atmosphäre", lFil:"Einfallende Filamente", lDisk:"Zirkumnukleare Scheibe", lJet:"Radio-Jets", lGal:"Wirtsgalaxie (NGC 4696)", lUni:"Haufengalaxien",
       anim:"Animation", pause:"Pause", play:"Abspielen", reset:"Ansicht zurücksetzen",
-      views:"Blickwinkel", vUni:"Universum", vWide:"Übersicht", vWideSub:"Dutzende kpc", vDisk:"Kernscheibe", autoRot:"Auto-Orbit", credit:"Erstellt mit KI — Claude Fable 5 (Anthropic)",
-      about:"Über diese Rekonstruktion",
+      views:"Blickwinkel", vUni:"Universum", vWide:"Übersicht", vWideSub:"Dutzende kpc", vDisk:"Kernscheibe", autoRot:"Auto-Orbit", credit:"Erstellt mit KI — Claude Fable 5 (Anthropic) / SUNO",
+      about:"Hilfe / Über diese Rekonstruktion",
       gratitudeLabel:"Dank an die Forscher",
       a1:"Diese Szene zeigt, wie supermassereiche Schwarze Löcher gefüttert werden: Heißes Gas (10⁸ K) des Haufens kondensiert zu Filamenten, die einfallen, Drehimpuls verlieren und sich einer rotierenden <b>zirkumnuklearen Scheibe</b> anschließen (~618 pc, mit 10 pc Auflösung durch JWST/NIRSpec). Die Scheibe speist die Akkretion auf das Schwarze Loch, das Radio-Jets ausstößt, die Kavitäten in das heiße Gas graben — ein selbstregulierender Kreislauf.",
       a2:"<b>Die Größenverhältnisse sind komprimiert.</b> Die Filamente erstrecken sich tatsächlich über Dutzende Kiloparsec; Wirtsgalaxie und Haufen sind weit größer. Diese Rekonstruktion komprimiert die Skalen, um das Phänomen auf einen Blick zu zeigen; sie ist keine wörtliche Darstellung der JWST-Daten.",
@@ -485,8 +531,8 @@
       phHot:"Горячая плазма (рентген)", phWarm:"Тёплый ионизованный газ", phCold:"Холодный молекулярный газ", phJet:"Радиоджет (AGN)", phBH:"Сверхмассивная чёрная дыра",
       layers:"Слои", lAtmo:"Горячая атмосфера", lFil:"Падающие волокна", lDisk:"Околоядерный диск", lJet:"Радиоджеты", lGal:"Родительская галактика (NGC 4696)", lUni:"Галактики скопления",
       anim:"Анимация", pause:"Пауза", play:"Пуск", reset:"Сбросить вид",
-      views:"Ракурсы", vUni:"Вселенная", vWide:"Общий вид", vWideSub:"десятки кпк", vDisk:"Ядерный диск", autoRot:"Автоорбита", credit:"Создано с помощью ИИ — Claude Fable 5 (Anthropic)",
-      about:"Об этой реконструкции",
+      views:"Ракурсы", vUni:"Вселенная", vWide:"Общий вид", vWideSub:"десятки кпк", vDisk:"Ядерный диск", autoRot:"Автоорбита", credit:"Создано с помощью ИИ — Claude Fable 5 (Anthropic) / SUNO",
+      about:"Справка / Об этой реконструкции",
       gratitudeLabel:"Благодарность исследователям",
       a1:"Эта сцена показывает, как питаются сверхмассивные чёрные дыры: горячий газ (10⁸ K) скопления конденсируется в волокна, которые падают внутрь, теряют угловой момент и вливаются во вращающийся <b>околоядерный диск</b> (~618 пк, разрешение 10 пк, JWST/NIRSpec). Диск питает аккрецию на чёрную дыру, которая запускает радиоджеты, выдувающие полости в горячем газе, — саморегулирующийся цикл.",
       a2:"<b>Масштабы сжаты.</b> В действительности волокна простираются на десятки килопарсек; галактика и скопление гораздо больше. Реконструкция сжимает масштабы, чтобы показать явление целиком; это не буквальное воспроизведение данных JWST.",
@@ -504,8 +550,8 @@
       phHot:"炽热等离子体（X射线）", phWarm:"温热电离气体", phCold:"冷分子气体", phJet:"射电喷流（AGN）", phBH:"超大质量黑洞",
       layers:"图层", lAtmo:"炽热大气", lFil:"坠落细丝", lDisk:"核周盘", lJet:"射电喷流", lGal:"宿主星系（NGC 4696）", lUni:"星系团成员星系",
       anim:"动画", pause:"暂停", play:"播放", reset:"重置视角",
-      views:"视角", vUni:"宇宙", vWide:"全景", vWideSub:"数十 kpc", vDisk:"核盘", autoRot:"自动环绕", credit:"由 AI 制作 — Claude Fable 5（Anthropic）",
-      about:"关于此重构",
+      views:"视角", vUni:"宇宙", vWide:"全景", vWideSub:"数十 kpc", vDisk:"核盘", autoRot:"自动环绕", credit:"由 AI 制作 — Claude Fable 5（Anthropic） / SUNO",
+      about:"帮助 / 关于此重构",
       gratitudeLabel:"对研究人员的感谢",
       a1:"这一场景展示了超大质量黑洞的进食机制：星系团中的炽热气体（10⁸ K）凝结成细丝，向内坠落并失去角动量，汇入一个旋转的<b>核周盘</b>（约 618 秒差距，JWST/NIRSpec 分辨率达 10 秒差距）。该盘为黑洞吸积供给物质，黑洞则喷出射电喷流，在热气体中开凿空腔——形成自我调节的循环。",
       a2:"<b>比例经过压缩。</b>细丝实际延伸数十千秒差距；宿主星系和星系团则更为庞大。此重构压缩了尺度，以便一览全貌，并非 JWST 数据的逐字呈现。",
@@ -523,8 +569,8 @@
       phHot:"高温プラズマ（X線）", phWarm:"電離ガス", phCold:"低温分子ガス", phJet:"電波ジェット（AGN）", phBH:"超大質量ブラックホール",
       layers:"レイヤー", lAtmo:"高温大気", lFil:"落下するフィラメント", lDisk:"核周円盤", lJet:"電波ジェット", lGal:"母銀河（NGC 4696）", lUni:"銀河団の銀河",
       anim:"アニメーション", pause:"一時停止", play:"再生", reset:"視点をリセット",
-      views:"視点", vUni:"宇宙", vWide:"全体像", vWideSub:"数十 kpc", vDisk:"核円盤", autoRot:"自動軌道", credit:"AI 制作 — Claude Fable 5（Anthropic）",
-      about:"この再現について",
+      views:"視点", vUni:"宇宙", vWide:"全体像", vWideSub:"数十 kpc", vDisk:"核円盤", autoRot:"自動軌道", credit:"AI 制作 — Claude Fable 5（Anthropic） / SUNO",
+      about:"ヘルプ / この再現について",
       gratitudeLabel:"研究者への感謝",
       a1:"このシーンは超大質量ブラックホールへの物質供給を示しています。銀河団の高温ガス（10⁸ K）がフィラメントに凝縮して落下し、角運動量を失って回転する<b>核周円盤</b>（約618 pc、JWST/NIRSpecで10 pcの分解能）に合流します。円盤はブラックホールへの降着を促し、ブラックホールは電波ジェットを噴出して高温ガスに空洞を穿つ——自己調節のループです。",
       a2:"<b>縮尺は圧縮されています。</b>実際のフィラメントは数十キロパーセクに及び、母銀河や銀河団はさらに巨大です。この再現は現象を一望できるようスケールを圧縮したもので、JWSTデータの忠実な描写ではありません。",
@@ -542,8 +588,8 @@
       phHot:"بلازما ساخنة (أشعة سينية)", phWarm:"غاز متأين دافئ", phCold:"غاز جزيئي بارد", phJet:"نفاث راديوي (AGN)", phBH:"ثقب أسود فائق الكتلة",
       layers:"الطبقات", lAtmo:"الغلاف الساخن", lFil:"خيوط ساقطة", lDisk:"القرص المحيط بالنواة", lJet:"نفاثات راديوية", lGal:"المجرة المضيفة (NGC 4696)", lUni:"مجرات العنقود",
       anim:"الحركة", pause:"إيقاف مؤقت", play:"تشغيل", reset:"إعادة ضبط العرض",
-      views:"وجهات النظر", vUni:"الكون", vWide:"نظرة عامة", vWideSub:"عشرات الكيلوفراسخ", vDisk:"القرص النووي", autoRot:"مدار تلقائي", credit:"أُنشئ بالذكاء الاصطناعي — Claude Fable 5 (Anthropic)",
-      about:"حول هذا التصور",
+      views:"وجهات النظر", vUni:"الكون", vWide:"نظرة عامة", vWideSub:"عشرات الكيلوفراسخ", vDisk:"القرص النووي", autoRot:"مدار تلقائي", credit:"أُنشئ بالذكاء الاصطناعي — Claude Fable 5 (Anthropic) / SUNO",
+      about:"المساعدة / حول هذا التصور",
       gratitudeLabel:"شكر للباحثين",
       a1:"يوضّح هذا المشهد كيف تتغذى الثقوب السوداء فائقة الكتلة: يتكاثف الغاز الساخن (10⁸ كلفن) في العنقود إلى خيوط تسقط نحو الداخل وتفقد زخمها الزاوي لتنضم إلى <b>قرص محيط بالنواة</b> دوّار (~618 فرسخ فلكي، بدقة 10 فراسخ بواسطة JWST/NIRSpec). يغذي القرص التراكم على الثقب الأسود الذي يطلق نفاثات راديوية تحفر تجاويف في الغاز الساخن — حلقة ذاتية التنظيم.",
       a2:"<b>المقاييس مضغوطة.</b> تمتد الخيوط فعليًا عبر عشرات الكيلوفراسخ؛ والمجرة المضيفة والعنقود أكبر بكثير. يضغط هذا التصور المقاييس لعرض الظاهرة بنظرة واحدة، وليس تمثيلًا حرفيًا لبيانات JWST.",
@@ -561,8 +607,8 @@
       phHot:"गर्म प्लाज़्मा (एक्स-रे)", phWarm:"आयनित गैस", phCold:"ठंडी आणविक गैस", phJet:"रेडियो जेट (AGN)", phBH:"महाविशाल ब्लैक होल",
       layers:"परतें", lAtmo:"गर्म वायुमंडल", lFil:"गिरते तंतु", lDisk:"परिनाभिकीय डिस्क", lJet:"रेडियो जेट", lGal:"मेज़बान आकाशगंगा (NGC 4696)", lUni:"क्लस्टर की आकाशगंगाएँ",
       anim:"एनीमेशन", pause:"रोकें", play:"चलाएँ", reset:"दृश्य रीसेट करें",
-      views:"दृष्टिकोण", vUni:"ब्रह्मांड", vWide:"समग्र दृश्य", vWideSub:"दसियों kpc", vDisk:"नाभिकीय डिस्क", autoRot:"स्वतः परिक्रमा", credit:"AI द्वारा निर्मित — Claude Fable 5 (Anthropic)",
-      about:"इस पुनर्निर्माण के बारे में",
+      views:"दृष्टिकोण", vUni:"ब्रह्मांड", vWide:"समग्र दृश्य", vWideSub:"दसियों kpc", vDisk:"नाभिकीय डिस्क", autoRot:"स्वतः परिक्रमा", credit:"AI द्वारा निर्मित — Claude Fable 5 (Anthropic) / SUNO",
+      about:"सहायता / इस पुनर्निर्माण के बारे में",
       gratitudeLabel:"शोधकर्ताओं को धन्यवाद",
       a1:"यह दृश्य दिखाता है कि महाविशाल ब्लैक होल कैसे भोजन पाते हैं: क्लस्टर की गर्म गैस (10⁸ K) तंतुओं में संघनित होकर भीतर गिरती है, कोणीय संवेग खोती है और एक घूमती <b>परिनाभिकीय डिस्क</b> (~618 pc, JWST/NIRSpec द्वारा 10 pc विभेदन) में मिल जाती है। यह डिस्क ब्लैक होल पर अभिवृद्धि को पोषित करती है, जो रेडियो जेट छोड़ता है जो गर्म गैस में गुहाएँ बनाते हैं — एक स्व-नियंत्रित चक्र।",
       a2:"<b>पैमाने संकुचित हैं।</b> तंतु वास्तव में दसियों किलोपारसेक तक फैले हैं; मेज़बान आकाशगंगा और क्लस्टर कहीं बड़े हैं। यह पुनर्निर्माण पूरी परिघटना को एक दृष्टि में दिखाने के लिए पैमानों को संकुचित करता है; यह JWST डेटा का शाब्दिक चित्रण नहीं है।",
@@ -575,6 +621,245 @@
   var currentLang = 'en';
   var NATIVE = {en:"English", fr:"Français", es:"Español", pt:"Português", de:"Deutsch", ru:"Русский", zh:"中文", ja:"日本語", ar:"العربية", hi:"हिन्दी"};
   var SRC = {en:"Source:", fr:"Source :", es:"Fuente:", pt:"Fonte:", de:"Quelle:", ru:"Источник:", zh:"来源：", ja:"出典：", ar:"المصدر:", hi:"स्रोत:"};
+  var MUSIC_UI = {
+    en:{label:"Music", mute:"Pause music", unmute:"Play music", volume:"Music volume"},
+    fr:{label:"Musique", mute:"Mettre la musique en pause", unmute:"Lire la musique", volume:"Volume de la musique"},
+    es:{label:"Música", mute:"Pausar música", unmute:"Reproducir música", volume:"Volumen de la música"},
+    pt:{label:"Música", mute:"Pausar música", unmute:"Reproduzir música", volume:"Volume da música"},
+    de:{label:"Musik", mute:"Musik pausieren", unmute:"Musik abspielen", volume:"Musiklautstärke"},
+    ru:{label:"Музыка", mute:"Приостановить музыку", unmute:"Включить музыку", volume:"Громкость музыки"},
+    zh:{label:"音乐", mute:"暂停音乐", unmute:"播放音乐", volume:"音乐音量"},
+    ja:{label:"音楽", mute:"音楽を一時停止", unmute:"音楽を再生", volume:"音楽の音量"},
+    ar:{label:"الموسيقى", mute:"إيقاف الموسيقى مؤقتًا", unmute:"تشغيل الموسيقى", volume:"مستوى صوت الموسيقى"},
+    hi:{label:"संगीत", mute:"संगीत रोकें", unmute:"संगीत चलाएँ", volume:"संगीत की आवाज़"}
+  };
+  var HELP_UI = {
+    en:{
+      title:"Help",
+      keyboard:"Keyboard",
+      gestures:"Mouse & touch gestures",
+      keys:[
+        ["Space","Pause or resume the background music when no control is focused."],
+        ["Tab / Shift + Tab","Move forward or backward through the interactive controls."],
+        ["Enter / Space","Activate the focused button or switch. On the panel handle, open or close the settings."],
+        ["Arrow keys","Adjust the focused speed or volume slider."]
+      ],
+      touch:[
+        ["Click / tap","On an empty area of the scene, hide or show all interface overlays."],
+        ["Drag","Orbit the 3D camera around the scene."],
+        ["Wheel / trackpad","Zoom in or out."],
+        ["Pinch","Zoom with two fingers."],
+        ["Two-finger drag","Orbit the camera while keeping both fingers together."],
+        ["Two-finger twist","Roll the 3D view around the camera axis."],
+        ["Panel drag / flick","Drag the bottom handle vertically to raise or lower the settings panel; tap it to toggle. On phones, the language row can also be dragged."]
+      ]
+    },
+    fr:{
+      title:"Aide",
+      keyboard:"Clavier",
+      gestures:"Gestes souris et tactiles",
+      keys:[
+        ["Espace","Mettre en pause ou reprendre la musique de fond lorsqu’aucun contrôle n’a le focus."],
+        ["Tab / Maj + Tab","Parcourir les contrôles interactifs vers l’avant ou vers l’arrière."],
+        ["Entrée / Espace","Activer le bouton ou la switch sélectionnée. Sur la poignée du panneau, ouvrir ou fermer les réglages."],
+        ["Touches fléchées","Régler le slider de vitesse ou de volume sélectionné."]
+      ],
+      touch:[
+        ["Clic / tap","Sur une zone vide de la scène, masquer ou afficher toute l’interface."],
+        ["Glisser","Faire orbiter la caméra 3D autour de la scène."],
+        ["Molette / trackpad","Zoomer ou dézoomer."],
+        ["Pincement","Zoomer avec deux doigts."],
+        ["Glisser à deux doigts","Faire orbiter la caméra en déplaçant les deux doigts ensemble."],
+        ["Rotation à deux doigts","Faire rouler la vue 3D autour de l’axe de la caméra."],
+        ["Glisser / lancer le panneau","Glisser verticalement la poignée inférieure pour monter ou baisser le panneau des réglages; un tap l’ouvre ou le ferme. Sur téléphone, la ligne de langue peut aussi être glissée."]
+      ]
+    },
+    es:{
+      title:"Ayuda",
+      keyboard:"Teclado",
+      gestures:"Gestos de ratón y táctiles",
+      keys:[
+        ["Espacio","Pausar o reanudar la música de fondo cuando ningún control tiene el foco."],
+        ["Tab / Mayús + Tab","Recorrer los controles interactivos hacia delante o hacia atrás."],
+        ["Entrar / Espacio","Activar el botón o interruptor seleccionado. En el tirador del panel, abrir o cerrar los ajustes."],
+        ["Teclas de flecha","Ajustar el control de velocidad o volumen seleccionado."]
+      ],
+      touch:[
+        ["Clic / toque","En una zona vacía de la escena, ocultar o mostrar toda la interfaz."],
+        ["Arrastrar","Orbitar la cámara 3D alrededor de la escena."],
+        ["Rueda / trackpad","Acercar o alejar la vista."],
+        ["Pellizcar","Hacer zoom con dos dedos."],
+        ["Arrastrar con dos dedos","Orbitar la cámara desplazando ambos dedos juntos."],
+        ["Girar con dos dedos","Rotar la vista 3D alrededor del eje de la cámara."],
+        ["Arrastrar / lanzar el panel","Arrastrar verticalmente el tirador inferior para subir o bajar el panel; un toque lo abre o cierra. En teléfonos, también se puede arrastrar la fila de idioma."]
+      ]
+    },
+    pt:{
+      title:"Ajuda",
+      keyboard:"Teclado",
+      gestures:"Gestos de rato e toque",
+      keys:[
+        ["Espaço","Pausar ou retomar a música de fundo quando nenhum controlo está em foco."],
+        ["Tab / Shift + Tab","Percorrer os controlos interativos para a frente ou para trás."],
+        ["Enter / Espaço","Ativar o botão ou interruptor selecionado. Na pega do painel, abrir ou fechar as definições."],
+        ["Teclas de seta","Ajustar o controlo de velocidade ou volume selecionado."]
+      ],
+      touch:[
+        ["Clique / toque","Numa área vazia da cena, ocultar ou mostrar toda a interface."],
+        ["Arrastar","Orbitar a câmara 3D em redor da cena."],
+        ["Roda / trackpad","Aumentar ou diminuir o zoom."],
+        ["Pinçar","Fazer zoom com dois dedos."],
+        ["Arrastar com dois dedos","Orbitar a câmara deslocando os dois dedos em conjunto."],
+        ["Rodar com dois dedos","Rodar a vista 3D em torno do eixo da câmara."],
+        ["Arrastar / lançar o painel","Arrastar verticalmente a pega inferior para subir ou baixar o painel; um toque abre-o ou fecha-o. No telemóvel, a linha de idioma também pode ser arrastada."]
+      ]
+    },
+    de:{
+      title:"Hilfe",
+      keyboard:"Tastatur",
+      gestures:"Maus- und Touch-Gesten",
+      keys:[
+        ["Leertaste","Die Hintergrundmusik pausieren oder fortsetzen, wenn kein Steuerelement fokussiert ist."],
+        ["Tab / Umschalt + Tab","Vorwärts oder rückwärts durch die interaktiven Steuerelemente wechseln."],
+        ["Eingabe / Leertaste","Die fokussierte Schaltfläche oder den Schalter aktivieren. Am Panelgriff die Einstellungen öffnen oder schließen."],
+        ["Pfeiltasten","Den fokussierten Geschwindigkeits- oder Lautstärkeregler anpassen."]
+      ],
+      touch:[
+        ["Klick / Tippen","Auf einer freien Stelle der Szene die gesamte Oberfläche aus- oder einblenden."],
+        ["Ziehen","Die 3D-Kamera um die Szene bewegen."],
+        ["Mausrad / Trackpad","Ein- oder auszoomen."],
+        ["Zwei-Finger-Zoom","Mit zwei Fingern zoomen."],
+        ["Mit zwei Fingern ziehen","Die Kamera bewegen, indem beide Finger gemeinsam verschoben werden."],
+        ["Mit zwei Fingern drehen","Die 3D-Ansicht um die Kameraachse rollen."],
+        ["Panel ziehen / wischen","Den unteren Griff vertikal ziehen, um das Panel anzuheben oder abzusenken; Tippen öffnet oder schließt es. Auf Smartphones kann auch die Sprachzeile gezogen werden."]
+      ]
+    },
+    ru:{
+      title:"Справка",
+      keyboard:"Клавиатура",
+      gestures:"Жесты мышью и касанием",
+      keys:[
+        ["Пробел","Приостановить или продолжить фоновую музыку, если ни один элемент управления не выбран."],
+        ["Tab / Shift + Tab","Переходить по интерактивным элементам вперёд или назад."],
+        ["Enter / Пробел","Активировать выбранную кнопку или переключатель. На ручке панели — открыть или закрыть настройки."],
+        ["Клавиши со стрелками","Настроить выбранный ползунок скорости или громкости."]
+      ],
+      touch:[
+        ["Щелчок / касание","На пустом участке сцены скрыть или показать весь интерфейс."],
+        ["Перетаскивание","Вращать 3D-камеру вокруг сцены."],
+        ["Колесо / трекпад","Приблизить или отдалить вид."],
+        ["Щипок","Масштабировать двумя пальцами."],
+        ["Перетаскивание двумя пальцами","Вращать камеру, перемещая оба пальца вместе."],
+        ["Поворот двумя пальцами","Наклонять 3D-вид вокруг оси камеры."],
+        ["Перетаскивание панели","Тянуть нижнюю ручку вертикально, чтобы поднять или опустить панель; касание открывает или закрывает её. На телефоне можно также тянуть строку выбора языка."]
+      ]
+    },
+    zh:{
+      title:"帮助",
+      keyboard:"键盘",
+      gestures:"鼠标与触控手势",
+      keys:[
+        ["空格键","未聚焦任何控件时，暂停或继续播放背景音乐。"],
+        ["Tab / Shift + Tab","向前或向后切换交互控件。"],
+        ["回车 / 空格键","激活当前聚焦的按钮或开关；聚焦面板把手时，打开或关闭设置。"],
+        ["方向键","调整当前聚焦的速度或音量滑块。"]
+      ],
+      touch:[
+        ["点击 / 轻触","在场景空白处隐藏或显示全部界面。"],
+        ["拖动","让 3D 相机围绕场景旋转。"],
+        ["滚轮 / 触控板","放大或缩小。"],
+        ["双指捏合","用两根手指缩放。"],
+        ["双指拖动","同时移动两根手指，让相机环绕场景。"],
+        ["双指旋转","让 3D 视图绕相机轴滚转。"],
+        ["拖动 / 轻扫面板","垂直拖动底部把手以升起或降下设置面板；轻触可打开或关闭。手机上也可拖动语言栏。"]
+      ]
+    },
+    ja:{
+      title:"ヘルプ",
+      keyboard:"キーボード",
+      gestures:"マウスとタッチ操作",
+      keys:[
+        ["スペース","コントロールにフォーカスがないとき、背景音楽を一時停止または再生します。"],
+        ["Tab / Shift + Tab","操作できるコントロールを前後に移動します。"],
+        ["Enter / スペース","フォーカス中のボタンやスイッチを操作します。パネルのハンドルでは設定を開閉します。"],
+        ["矢印キー","フォーカス中の速度または音量スライダーを調整します。"]
+      ],
+      touch:[
+        ["クリック / タップ","シーンの何もない場所で、インターフェース全体を表示または非表示にします。"],
+        ["ドラッグ","3D カメラをシーンの周囲に回転させます。"],
+        ["ホイール / トラックパッド","拡大または縮小します。"],
+        ["ピンチ","2 本の指で拡大・縮小します。"],
+        ["2 本指でドラッグ","2 本の指を一緒に動かしてカメラを周回させます。"],
+        ["2 本指で回転","3D ビューをカメラ軸の周りに回転させます。"],
+        ["パネルをドラッグ / フリック","下部ハンドルを上下に動かして設定パネルを上げ下げし、タップで開閉します。スマートフォンでは言語行もドラッグできます。"]
+      ]
+    },
+    ar:{
+      title:"المساعدة",
+      keyboard:"لوحة المفاتيح",
+      gestures:"إيماءات الفأرة واللمس",
+      keys:[
+        ["مفتاح المسافة","إيقاف موسيقى الخلفية مؤقتًا أو استئنافها عندما لا يكون أي عنصر تحكم محددًا."],
+        ["Tab / Shift + Tab","التنقل إلى الأمام أو الخلف بين عناصر التحكم التفاعلية."],
+        ["Enter / المسافة","تفعيل الزر أو المفتاح المحدد. وعند مقبض اللوحة، فتح الإعدادات أو إغلاقها."],
+        ["مفاتيح الأسهم","ضبط شريط تمرير السرعة أو مستوى الصوت المحدد."]
+      ],
+      touch:[
+        ["نقر / لمس","إخفاء الواجهة بالكامل أو إظهارها عند النقر على مساحة فارغة من المشهد."],
+        ["سحب","تدوير الكاميرا ثلاثية الأبعاد حول المشهد."],
+        ["عجلة الفأرة / لوحة اللمس","التكبير أو التصغير."],
+        ["ضم الإصبعين","التكبير أو التصغير بإصبعين."],
+        ["سحب بإصبعين","تدوير الكاميرا بتحريك الإصبعين معًا."],
+        ["لف بإصبعين","لف العرض ثلاثي الأبعاد حول محور الكاميرا."],
+        ["سحب / دفع اللوحة","سحب المقبض السفلي عموديًا لرفع لوحة الإعدادات أو خفضها؛ واللمس يفتحها أو يغلقها. على الهاتف يمكن أيضًا سحب صف اللغة."]
+      ]
+    },
+    hi:{
+      title:"सहायता",
+      keyboard:"कीबोर्ड",
+      gestures:"माउस और टच जेस्चर",
+      keys:[
+        ["स्पेस","जब किसी कंट्रोल पर फ़ोकस न हो, तब बैकग्राउंड संगीत रोकें या फिर चलाएँ।"],
+        ["Tab / Shift + Tab","इंटरैक्टिव कंट्रोल में आगे या पीछे जाएँ।"],
+        ["Enter / स्पेस","फ़ोकस किए गए बटन या स्विच को सक्रिय करें। पैनल हैंडल पर सेटिंग खोलें या बंद करें।"],
+        ["ऐरो कुंजियाँ","फ़ोकस किए गए गति या वॉल्यूम स्लाइडर को बदलें।"]
+      ],
+      touch:[
+        ["क्लिक / टैप","सीन की खाली जगह पर पूरे इंटरफ़ेस को छिपाएँ या दिखाएँ।"],
+        ["ड्रैग","3D कैमरे को सीन के चारों ओर घुमाएँ।"],
+        ["व्हील / ट्रैकपैड","ज़ूम इन या ज़ूम आउट करें।"],
+        ["पिंच","दो उँगलियों से ज़ूम करें।"],
+        ["दो उँगलियों से ड्रैग","दोनों उँगलियाँ साथ चलाकर कैमरे को ऑर्बिट कराएँ।"],
+        ["दो उँगलियों से घुमाएँ","3D दृश्य को कैमरा अक्ष के चारों ओर रोल करें।"],
+        ["पैनल ड्रैग / फ़्लिक","सेटिंग पैनल को ऊपर या नीचे करने के लिए निचले हैंडल को लंबवत खींचें; टैप करके खोलें या बंद करें। फ़ोन पर भाषा पंक्ति भी खींची जा सकती है।"]
+      ]
+    }
+  };
+  function renderHelp(){
+    var copy = HELP_UI[currentLang] || HELP_UI.en;
+    document.getElementById('help-title').textContent = copy.title;
+    document.getElementById('help-keyboard-label').textContent = copy.keyboard;
+    document.getElementById('help-gestures-label').textContent = copy.gestures;
+    function fill(id, items){
+      var list = document.getElementById(id);
+      list.textContent = '';
+      items.forEach(function(item){
+        var wrapper = document.createElement('div');
+        wrapper.className = 'help-item';
+        var dt = document.createElement('dt');
+        var key = document.createElement('kbd');
+        var dd = document.createElement('dd');
+        key.textContent = item[0];
+        dd.textContent = item[1];
+        dt.appendChild(key);
+        wrapper.appendChild(dt);
+        wrapper.appendChild(dd);
+        list.appendChild(wrapper);
+      });
+    }
+    fill('help-keyboard', copy.keys);
+    fill('help-gestures', copy.touch);
+  }
   function refreshLangOptions(){
     var sel = document.getElementById('lang-select');
     for(var i=0;i<sel.options.length;i++){
@@ -595,6 +880,7 @@
     document.getElementById('mode-schema').innerHTML = t.mSchema + '<br><span style="opacity:.6">' + t.mSchemaSub + '</span>';
     document.getElementById('mode-art').innerHTML = t.mArt + '<br><span style="opacity:.6">' + t.mArtSub + '</span>';
     document.getElementById('lb-camview').textContent = t.camView;
+    updateMusicLabels();
     document.getElementById('lbl-legend').textContent = t.legend;
     document.getElementById('ph-hot').textContent = t.phHot;
     document.getElementById('ph-warm').textContent = t.phWarm;
@@ -618,6 +904,8 @@
     document.getElementById('lb-auto').textContent = t.autoRot;
     document.getElementById('credit').textContent = t.credit;
     document.getElementById('about-summary').textContent = t.about;
+    document.getElementById('about-reconstruction-label').textContent = t.about.replace(/^.*?\/\s*/, '');
+    renderHelp();
     document.getElementById('about-1').innerHTML = t.a1;
     document.getElementById('about-2').innerHTML = t.a2;
     document.getElementById('about-3').innerHTML = t.a3;
@@ -642,6 +930,90 @@
   document.getElementById('lang-select').value = initialLang;
   applyLang(initialLang);
   document.getElementById('lang-select').addEventListener('change', function(e){ applyLang(e.target.value); });
+
+  // ---------------------------------------------------------------
+  // Background music
+  // ---------------------------------------------------------------
+  var backgroundMusic = document.getElementById('background-music');
+  var musicToggle = document.getElementById('music-toggle');
+  var musicVolume = document.getElementById('music-volume');
+  var musicValue = document.getElementById('music-value');
+  var musicShouldPlay = true;
+  var lastMusicVolume = .35;
+  try{
+    var savedMusicVolume = parseFloat(localStorage.getItem('bh-music-volume'));
+    if(isFinite(savedMusicVolume)) lastMusicVolume = Math.max(0, Math.min(1, savedMusicVolume));
+  }catch(e){}
+  backgroundMusic.volume = lastMusicVolume;
+  musicVolume.value = Math.round(lastMusicVolume * 100);
+
+  function updateMusicLabels(){
+    var copy = MUSIC_UI[currentLang] || MUSIC_UI.en;
+    var audioEl = document.getElementById('background-music');
+    var toggleEl = document.getElementById('music-toggle');
+    var volumeEl = document.getElementById('music-volume');
+    var playingMusic = (typeof musicShouldPlay === 'boolean') ? musicShouldPlay : !audioEl.paused;
+    document.getElementById('music-label').textContent = copy.label;
+    toggleEl.setAttribute('aria-label', playingMusic ? copy.mute : copy.unmute);
+    toggleEl.setAttribute('title', playingMusic ? copy.mute : copy.unmute);
+    toggleEl.checked = playingMusic;
+    volumeEl.setAttribute('aria-label', copy.volume);
+  }
+  function updateMusicUI(){
+    musicValue.textContent = Math.round(backgroundMusic.volume * 100) + '%';
+    updateMusicLabels();
+  }
+  function startMusic(){
+    if(!musicShouldPlay) return;
+    var attempt = backgroundMusic.play();
+    if(attempt && attempt.then){
+      attempt.then(function(){
+        if(!musicShouldPlay) backgroundMusic.pause();
+        updateMusicUI();
+      }).catch(updateMusicUI);
+    }else{
+      updateMusicUI();
+    }
+  }
+  function setMusicPlaying(shouldPlay){
+    musicShouldPlay = shouldPlay;
+    if(shouldPlay){
+      startMusic();
+    }else{
+      backgroundMusic.pause();
+      updateMusicUI();
+    }
+  }
+  function toggleMusicPlayback(){
+    setMusicPlaying(!musicShouldPlay);
+  }
+  musicToggle.addEventListener('change', function(e){
+    setMusicPlaying(e.target.checked);
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.code !== 'Space' || e.repeat) return;
+    var interactive = e.target.closest && e.target.closest('button, input, select, textarea, a, summary, [role="button"], [contenteditable="true"]');
+    if(interactive) return;
+    e.preventDefault();
+    toggleMusicPlayback();
+  });
+  musicVolume.addEventListener('input', function(e){
+    var value = parseInt(e.target.value, 10) / 100;
+    backgroundMusic.volume = value;
+    if(value > 0) lastMusicVolume = value;
+    try{ localStorage.setItem('bh-music-volume', String(value)); }catch(err){}
+    updateMusicUI();
+  });
+  // Audible autoplay is often blocked; the first user gesture unlocks it.
+  function unlockMusic(){
+    if(musicShouldPlay) startMusic();
+    document.removeEventListener('pointerdown', unlockMusic, true);
+    document.removeEventListener('keydown', unlockMusic, true);
+  }
+  document.addEventListener('pointerdown', unlockMusic, true);
+  document.addEventListener('keydown', unlockMusic, true);
+  updateMusicUI();
+  startMusic();
 
   // ---------------------------------------------------------------
   // WebGL setup
@@ -1350,7 +1722,31 @@
   }
   canvas.addEventListener('pointerup', endPointer);
   canvas.addEventListener('pointercancel', endPointer);
-  // Safari (iOS/macOS) page pinch-zoom guard — the scene handles pinch itself
+  // Safari exposes trackpad rotation as gesture events rather than as two
+  // simultaneous pointers. Handle its rotation while leaving touchscreen
+  // two-pointer gestures to the pointer logic above.
+  var nativeGestureRotation = 0;
+  canvas.addEventListener('gesturestart', function(e){
+    e.preventDefault();
+    nativeGestureRotation = typeof e.rotation === 'number' ? e.rotation : 0;
+  });
+  canvas.addEventListener('gesturechange', function(e){
+    e.preventDefault();
+    if(pointers.size >= 2 || typeof e.rotation !== 'number') return;
+    var rotation = e.rotation;
+    var delta = (rotation - nativeGestureRotation) * Math.PI / 180;
+    if(Math.abs(delta) > 1e-5){
+      rollBy(delta);
+      transition = null;
+    }
+    nativeGestureRotation = rotation;
+  });
+  canvas.addEventListener('gestureend', function(e){
+    e.preventDefault();
+    nativeGestureRotation = 0;
+  });
+  // Prevent Safari's page-level zoom when the gesture starts outside the
+  // canvas before pointer capture has settled.
   document.addEventListener('gesturestart', function(e){ e.preventDefault(); });
   canvas.addEventListener('wheel', function(e){
     e.preventDefault();
@@ -1447,7 +1843,7 @@
   });
   if(reduceMotion){ speed = 0.4; speedInput.value = 0.4; speedVal.textContent = '0.40×'; }
 
-  var autoOrbit = false;
+  var autoOrbit = true;
   document.getElementById('tg-auto').addEventListener('change', function(e){ autoOrbit = e.target.checked; });
 
   // ---------------------------------------------------------------
@@ -1475,7 +1871,7 @@
   // ---------------------------------------------------------------
   var simTime = 0, lastFrame = performance.now();
 
-  function updateCamera(now){
+  function updateCamera(now, dt){
     if(transition){
       var t = clamp((now-transition.t0)/transition.dur, 0, 1);
       var e = easeInOutCubic(t);
@@ -1487,7 +1883,9 @@
         orbitBy(cam.vYaw, cam.vPitch);
         cam.vYaw *= 0.9; cam.vPitch *= 0.9;
       }
-      if(autoOrbit && !reduceMotion) orbitBy(0.0016, 0);
+      // Auto-orbit runs at 50% of its original 0.096 rad/s speed and remains
+      // independent from the animation-speed slider.
+      if(autoOrbit && !reduceMotion) orbitBy(0.048 * dt, 0);
     }
   }
 
@@ -1497,7 +1895,7 @@
     lastFrame = now;
     if(playing) simTime += dt*speed;
 
-    updateCamera(now);
+    updateCamera(now, dt);
 
     var eye = quatRotate(cam.q, [0, 0, cam.radius]);
     var upv = quatRotate(cam.q, [0, 1, 0]);
